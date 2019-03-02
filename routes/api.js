@@ -70,8 +70,16 @@ router.post('/get/:data', function(req, res, next) {
   }
 
   // username, profile img
-  res.status(500)
+  res.status(200)
   // 받아온 데이터
+  var output = {
+    type: 'response',
+    rid: '16진수',
+
+    is_vaild: true,
+    requested_data: 'usname/pfimg',
+    responce_data: 'string'
+  }
   res.send('respond with a resource');
 });
 
@@ -99,11 +107,17 @@ router.post('/verify/:data', function(req, res, next) {
 
     sessid: '16진수', // sessid 제외
     value: '16진수',
-    sysinfo: '', // sessid 한정
+    sysinfo: '' // sessid 한정
   }
   // password, auto-login key, sessid
   res.status(200)
   // 0, 1
+  var output = {
+    type: 'response',
+    rid: '16진수',
+
+    is_vaild: true
+  }
   res.send('respond with a resource');
 });
 
@@ -115,9 +129,18 @@ router.post('/modify/:data', function(req, res, next) {
 
     sessid: '16진수'
   }
-  
+
   // password, nickname
   res.status(200)
+  var output = {
+    type: 'response',
+    rid: '16진수',
+
+    is_vaild: true,
+    is_processed: true,
+
+    original_data: '1234'
+  }
   res.send('respond with a resource');
 });
 module.exports = router;
