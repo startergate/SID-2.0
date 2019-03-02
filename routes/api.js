@@ -6,12 +6,16 @@ var router = express.Router();
 
 router.get('/', function(req, res, next) {
   res.status(404)
+  var output = {
+    type: 'response',
+
+    is_vaild: false
+  }
   res.send();
 });
 
 /* login related functions. */
 router.post('/login', function(req, res, next) {
-
   var input = {
     type: 'login',
     clientid: 1234,
