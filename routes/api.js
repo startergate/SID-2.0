@@ -4,7 +4,12 @@ var mysql = require('mysql');
 var passport = require('passport');
 var router = express.Router();
 
-var server
+var db_conn = mysql.createConnection({
+  host: 'db.donote.com',
+  user: 'root',
+  password: 'Wb4H9nn542',
+  database: 'sid_userdata'
+})
 
 router.all('/', function(req, res, next) {
   res.status(200)
@@ -21,7 +26,7 @@ router.all('/', function(req, res, next) {
 router.post('/login', function(req, res, next) {
   var input = {
     type: 'login',
-    clientid: 1234,
+    clientid: 숫자,
 
     userid: 'userid',
     password: 'hashed?',
@@ -40,7 +45,7 @@ router.post('/login', function(req, res, next) {
 
   var sessid = randomString(64)
   // DB
-  var rid
+  var rid = 1 // mysql autoincrease
 
   // 응답용 JSON 작성
   var output = {
@@ -126,20 +131,21 @@ router.post('/get/:data', function(req, res, next) {
 });
 
 /* create data. currently useless */
-/*router.post('/create/:data/', function(req, res, next) {
+router.post('/create/:data/', function(req, res, next) {
   var input = {
     type: 'create',
-    data: 'aulokey',
+    data: 'clientid/auloid',
     clientid: 1234,
 
-    sessid: '16진수'
+    sessid: '16진수' // clientid의 경우 없음
+
   }
   // auth key는 sessid로 통합
   // auth key, auto-login key
   res.status(200)
   // 정상 작동 여부 전송
   res.send('respond with a resource');
-});*/
+});
 
 router.post('/verify/:data', function(req, res, next) {
   var input = {
@@ -188,7 +194,16 @@ router.post('/modify/:data', function(req, res, next) {
 module.exports = router;
 
 var checkExist = function(targetDB, targetName, targetValue, valueType = 'string') {
-
+  try {
+    connection.connect()
+    if (valueType === 'string') {
+      var sql = "SELECT * FROM "+ targetDB + " WHERE " + targetName + " = '" + targetValue + "'";
+    } else {
+      var sql = "SELECT * FROM "+ targetDB + " WHERE " + targetName + " = " + targetValue;
+    }
+  } catch (e) {
+    return -1
+  }
 }
 
 var randomString = function(length) {
