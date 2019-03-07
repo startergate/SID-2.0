@@ -26,15 +26,17 @@ router.all('/', function(req, res, next) {
 router.post('/login', function(req, res, next) {
   var input = {
     type: 'login',
-    clientid: 숫자,
+    clientid: '숫자',
 
     userid: 'userid',
-    password: 'hashed?',
+    password: 'hashed',
 
     isAuth: true,
     isAuthOn: false,
     isWeb: true
   }
+
+  console.log(req.body)
 
   var id = " " // receive POST json ID
   var pw = " " // receive POST json hashed PW
@@ -142,7 +144,7 @@ router.post('/create/:data/', function(req, res, next) {
   }
   // auth key는 sessid로 통합
   // auth key, auto-login key
-  res.status(200)
+  res.status(201)
   // 정상 작동 여부 전송
   res.send('respond with a resource');
 });
@@ -191,7 +193,6 @@ router.post('/modify/:data', function(req, res, next) {
   }
   res.send('respond with a resource');
 });
-module.exports = router;
 
 var checkExist = function(targetDB, targetName, targetValue, valueType = 'string') {
   try {
@@ -224,3 +225,4 @@ var logCreater = function(type, time, datatype) {
     // response_log
   }
 }
+module.exports = router;
