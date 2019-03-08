@@ -11,7 +11,7 @@ var db_conn = mysql.createConnection({
   database: 'sid_userdata'
 })
 
-router.all('/', function(req, res, next) {
+router.all('/', (req, res, next) => {
   res.status(200)
   var output = {
     type: 'response',
@@ -23,8 +23,8 @@ router.all('/', function(req, res, next) {
 });
 
 /* login related functions. */
-router.post('/login', function(req, res, next) {
-  var input = {
+router.post('/login', (req, res, next) => {
+  /*var input = {
     type: 'login',
     clientid: '숫자',
 
@@ -34,7 +34,7 @@ router.post('/login', function(req, res, next) {
     isAuth: true,
     isAuthOn: false,
     isWeb: true
-  }
+  }*/
 
   console.log(req.body)
 
@@ -65,7 +65,7 @@ router.post('/login', function(req, res, next) {
   res.send(output);
 });
 
-router.post('/register', function(req, res, next) {
+router.post('/register', (req, res, next) => {
   var input = {
     type: 'register',
     clientid: 1234,
@@ -134,19 +134,31 @@ router.post('/get/:data', function(req, res, next) {
 
 /* create data. currently useless */
 router.post('/create/:data/', function(req, res, next) {
-  var input = {
+  /*var input = {
     type: 'create',
     data: 'clientid/auloid',
     clientid: 1234,
 
     sessid: '16진수' // clientid의 경우 없음
+    client_data: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36 OPR/58.0.3135.79'
+
+  }*/
+  createProcessor: {
+    if (req.body.data === 'clientid') {
+      db_conn.
+    } else if (req.body.data === 'aulokey') {
+
+    } else {
+      break createProcessor;
+    }
 
   }
-  // auth key는 sessid로 통합
-  // auth key, auto-login key
-  res.status(201)
+  // auto-login key
+  res.status(404)
   // 정상 작동 여부 전송
-  res.send('respond with a resource');
+  res.send({
+    message: 'use vaild data type'
+  });
 });
 
 router.post('/verify/:data', function(req, res, next) {
