@@ -38,10 +38,18 @@ router.post('/login', (req, res, next) => {
 
   console.log(req.body)
 
-  var id = " " // receive POST json ID
-  var pw = " " // receive POST json hashed PW
+  // POST DATA 무결성 검증
+  if (!(req.body.type === 'login' && jsonChecker(req.body, ['clientid', 'userid', 'password'], [true, true, true]))) {
+    res.status(400)
+    res.send()
+    return;
+  }
 
-  // 검증
+  // clientid, id, hashed 존재 검증
+
+  var id = req.body.userid // receive POST json ID
+  var pw = req.body.password // receive POST json hashed PW
+  var clientid = req.body.clientid // receive POST json CID
 
   // 세션 ID 생성
 
@@ -145,7 +153,7 @@ router.post('/create/:data/', function(req, res, next) {
   }*/
   createProcessor: {
     if (req.body.data === 'clientid') {
-      db_conn.
+      //db_conn.
     } else if (req.body.data === 'aulokey') {
 
     } else {
@@ -230,11 +238,34 @@ var randomString = function(length) {
   return rendom_str;
 }
 
-var logCreater = function(type, time, datatype) {
+var logCreater = (type, time, datatype) => {
   if (type == 'error') {
     // error_recorder
   } else {
     // response_log
   }
+}
+
+var jsonChecker = (_json, variablesArray, isMustFilled) => {
+  if (!Array.isArray(variablesArray) || !Array.isArray(isMustFilled)) {
+    throw new TypeError('Input Data is not an array');
+    return;
+  }
+  if (typeof _json !== 'object') {
+    throw new TypeError('Input Data is not an object');
+    return;
+  }
+  var cnt = 0
+  for (var data in _json) {
+    if (variablesArray.indexOf(data) === -1) continue;
+    if (!(_json[data] || !isMustFilled[cnt])) return 0;
+
+    cnt++
+  }
+  if (cnt !== variablesArray.length) return 0;
+  for (var variable in variablesArray) {
+    if (!_json.hasOwnProperty(variablesArray[variable])) return 0;
+  }
+  return 1;
 }
 module.exports = router;
