@@ -5,11 +5,12 @@ var passport = require('passport');
 var router = express.Router();
 
 var db_conn = mysql.createConnection({
-  host: 'db.donote.com',
+  host: 'db.donote.co',
   user: 'root',
   password: 'Wb4H9nn542',
   database: 'sid_userdata'
 })
+db_conn.connect();
 
 router.all('/', (req, res, next) => {
   res.status(200)
@@ -51,15 +52,16 @@ router.post('/login', (req, res, next) => {
   var clientid = req.body.clientid // receive POST json CID
 
   // clientid, id, hashed 존재 검증
-  db_conn.connect();
+  var sqlq = 'SELECT pid FROM userdata WHERE (id = \'' + id + '\') AND (pw = \'' + pw + '\')'
+  pid = 0
   try {
-    db.conn.query('SELECT pid FROM userdata WHERE id =' + id + ' AND pw = ' + pw, (error, results, fields) => {
-      console.log(error)
+    db_conn.query(sqlq, (error, results, fields) => {
       if (error) throw error;
-      if (!result.pid) {
+      if (results[0].pid) {
         throw new Error('df');
       }
-      pid = result.pid;
+      pid = results[0].pid;
+      console.log(pid);
       return;
     });
   } catch (e) {
@@ -68,7 +70,7 @@ router.post('/login', (req, res, next) => {
     return;
   }
 
-  console.log(pid);
+
   // 세션 ID 생성
   var sessid = randomString(64)
 
