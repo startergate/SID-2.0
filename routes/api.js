@@ -2,6 +2,7 @@ var express = require('express');
 var bodyparser = require('body-parser');
 var mysql = require('mysql');
 var passport = require('passport');
+var async = require('async');
 var router = express.Router();
 
 var db_conn = mysql.createConnection({
@@ -24,21 +25,7 @@ router.all('/', (req, res, next) => {
 });
 
 /* login related functions. */
-router.post('/login', (req, res, next) => {
-  /*var input = {
-    type: 'login',
-    clientid: '숫자',
-
-    userid: 'userid',
-    password: 'hashed',
-
-    isAuth: true,
-    isAuthOn: false,
-    isWeb: true
-  }*/
-
-  console.log(req.body)
-
+router.post('/login', async (req, res, next) => {
   // POST DATA 무결성 검증
   if (!(req.body.type === 'login' && jsonChecker(req.body, ['clientid', 'userid', 'password'], [true, true, true]))) {
     res.status(400)
@@ -52,25 +39,22 @@ router.post('/login', (req, res, next) => {
   var clientid = req.body.clientid // receive POST json CID
 
   // clientid, id, hashed 존재 검증
-  var sqlq = 'SELECT pid FROM userdata WHERE (id = \'' + id + '\') AND (pw = \'' + pw + '\')'
-  pid = 0
+  var sqlq = 'SELECT pid FROM userdata WHERE (id LIKE \'' + id + '\') AND (pw LIKE \'' + pw + '\')'
+
   try {
-    db_conn.query(sqlq, (error, results, fields) => {
+    var pid = await db_conn.query(sqlq, (error, results, fields) => {
       if (error) throw error;
-      if (results[0].pid) {
+      if (!results[0].pid) {
         throw new Error('df');
       }
-      pid = results[0].pid;
-      console.log(pid);
-      return;
+      console.log(results[0].pid);
+      return results[0].pid;
     });
   } catch (e) {
     res.status(400)
     res.send()
-    return;
+    return 0;
   }
-
-
   // 세션 ID 생성
   var sessid = randomString(64)
 
@@ -78,6 +62,9 @@ router.post('/login', (req, res, next) => {
   var rid = 1 // mysql autoincrease
 
   // 응답용 JSON 작성
+
+
+  //await console.log(pid);
   var output = {
     type: 'response',
     rid: '16진수',
