@@ -45,15 +45,33 @@ router.post('/login', (req, res, next) => {
     return;
   }
 
-  // clientid, id, hashed 존재 검증
-
+  // TODO: SQL 인젝션 대비 필요
   var id = req.body.userid // receive POST json ID
   var pw = req.body.password // receive POST json hashed PW
   var clientid = req.body.clientid // receive POST json CID
 
-  // 세션 ID 생성
+  // clientid, id, hashed 존재 검증
+  db_conn.connect();
+  try {
+    db.conn.query('SELECT pid FROM userdata WHERE id =' + id + ' AND pw = ' + pw, (error, results, fields) => {
+      console.log(error)
+      if (error) throw error;
+      if (!result.pid) {
+        throw new Error('df');
+      }
+      pid = result.pid;
+      return;
+    });
+  } catch (e) {
+    res.status(400)
+    res.send()
+    return;
+  }
 
+  console.log(pid);
+  // 세션 ID 생성
   var sessid = randomString(64)
+
   // DB
   var rid = 1 // mysql autoincrease
 
