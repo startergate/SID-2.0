@@ -1,9 +1,9 @@
-var express = require('express');
-var bodyparser = require('body-parser');
-var mysql = require('mysql');
-var passport = require('passport');
-var async = require('async');
-var router = express.Router();
+const express = require('express');
+const bodyparser = require('body-parser');
+const mysql = require('mysql');
+const passport = require('passport');
+const async = require('async');
+const router = express.Router();
 
 var db_conn = mysql.createConnection({
   host: 'db.donote.co',
@@ -14,7 +14,6 @@ var db_conn = mysql.createConnection({
 db_conn.connect();
 
 router.all('/', (req, res, next) => {
-  res.status(200)
   var output = {
     type: 'response',
 
@@ -25,7 +24,8 @@ router.all('/', (req, res, next) => {
 });
 
 /* login related functions. */
-router.post('/login', async (req, res, next) => {
+router.post('/login', (req, res, next) => {
+  var status = 200;
   // POST DATA 무결성 검증
   if (!(req.body.type === 'login' && jsonChecker(req.body, ['clientid', 'userid', 'password'], [true, true, true]))) {
     res.status(400)
@@ -37,48 +37,63 @@ router.post('/login', async (req, res, next) => {
   var id = req.body.userid // receive POST json ID
   var pw = req.body.password // receive POST json hashed PW
   var clientid = req.body.clientid // receive POST json CID
-
-  // clientid, id, hashed 존재 검증
-  var sqlq = 'SELECT pid FROM userdata WHERE (id LIKE \'' + id + '\') AND (pw LIKE \'' + pw + '\')'
-
+  var sqlq = 'SELECT client_data FROM client_list WHERE (clientid LIKE \'' + req.body.clientid + '\')';
   try {
-    var pid = await db_conn.query(sqlq, (error, results, fields) => {
+    db_conn.query(sqlq, (error, results, fields) => {
       if (error) throw error;
-      if (!results[0].pid) {
+      if (!results.length) {
         throw new Error('df');
       }
-      console.log(results[0].pid);
-      return results[0].pid;
+      return;
     });
   } catch (e) {
     res.status(400)
     res.send()
     return 0;
   }
-  // 세션 ID 생성
-  var sessid = randomString(64)
-
-  // DB
-  var rid = 1 // mysql autoincrease
-
-  // 응답용 JSON 작성
+  // clientid, id, hashed 존재 검증
 
 
-  //await console.log(pid);
-  var output = {
-    type: 'response',
-    rid: '16진수',
 
-    is_vaild: true,
-    requested_data: 'sessid',
-    response_data: sessid
+
+
+  sqlq = 'SELECT pid FROM userdata WHERE (id LIKE \'' + id + '\') AND (pw LIKE \'' + pw + '\')'
+
+  try {
+    db_conn.query(sqlq, (error, results, fields) => {
+      if (error) throw error;
+      if (!results.length) throw new Error(1);
+
+      // 세션 ID 생성
+      var sessid = randomString(64)
+
+      // DB
+      var rid = 1 // mysql autoincrease
+
+      // 응답용 JSON 작성
+
+
+      res.status(200)
+      // pid, 자동 로그인 토큰 전송
+      res.send({
+        type: 'response',
+        rid: '16진수',
+
+        is_vaild: true,
+        requested_data: 'sessid',
+        response_data: sessid
+      });
+    });
+  } catch (e) {
+    res.status(400)
+    res.send()
+    return 0;
   }
-  //output = JSON.stringify(output);
-  //res.status(200, { "Content-Type": "application/json;charset=utf-8" })
-  res.status(200)
-  // pid, 자동 로그인 토큰 전송
-  res.send(output);
 });
+
+
+
+
 
 router.post('/register', (req, res, next) => {
   var input = {
