@@ -37,8 +37,8 @@ router.post('/login', (req, res, next) => {
   var id = req.body.userid // receive POST json ID
   var pw = req.body.password // receive POST json hashed PW
   var clientid = req.body.clientid // receive POST json CID
-  var sqlq = 'SELECT client_data FROM client_list WHERE (clientid LIKE \'' + req.body.clientid + '\')';
-  try {
+  /*var sqlq = 'SELECT client_data FROM client_list WHERE (clientid LIKE \'' + req.body.clientid + '\')';
+  Promise.try(() => {
     db_conn.query(sqlq, (error, results, fields) => {
       if (error) throw error;
       if (!results.length) {
@@ -46,11 +46,11 @@ router.post('/login', (req, res, next) => {
       }
       return;
     });
-  } catch (e) {
+  ).catch((e) => {
     res.status(400)
     res.send()
     return 0;
-  }
+  })
   // clientid, id, hashed 존재 검증
 
 
@@ -64,31 +64,32 @@ router.post('/login', (req, res, next) => {
       if (error) throw error;
       if (!results.length) throw new Error(1);
 
-      // 세션 ID 생성
-      var sessid = randomString(64)
 
-      // DB
-      var rid = 1 // mysql autoincrease
-
-      // 응답용 JSON 작성
-
-
-      res.status(200)
-      // pid, 자동 로그인 토큰 전송
-      res.send({
-        type: 'response',
-        rid: '16진수',
-
-        is_vaild: true,
-        requested_data: 'sessid',
-        response_data: sessid
-      });
     });
   } catch (e) {
     res.status(400)
     res.send()
     return 0;
-  }
+  }*/
+  // 세션 ID 생성
+  var sessid = randomString(64)
+
+  // DB
+  var rid = 1 // mysql autoincrease
+
+  // 응답용 JSON 작성
+
+
+  res.status(200)
+  // pid, 자동 로그인 토큰 전송
+  res.send({
+    type: 'response',
+    rid: '16진수',
+
+    is_vaild: true,
+    requested_data: 'sessid',
+    response_data: sessid
+  });
 });
 
 
