@@ -24,9 +24,7 @@ router.all('/', (req, res, next) => {
 });
 
 /* login related functions. */
-router.post('/login', (req, res, next) => {
-  var cs = new conn_status(0);
-  cs.getStatus();
+router.post('/login', async (req, res, next) => {
   // POST DATA 무결성 검증
   if (!(req.body.type === 'login' && jsonChecker(req.body, ['clientid', 'userid', 'password'], [true, true, true]))) {
     res.status(400)
@@ -39,101 +37,11 @@ router.post('/login', (req, res, next) => {
   var pw = req.body.password // receive POST json hashed PW
   var clientid = req.body.clientid // receive POST json CID
   var sqlq = 'SELECT client_data FROM client_list WHERE (clientid LIKE \'' + req.body.clientid + '\')';
-  try {
-    db_conn.query(sqlq, (error, results, fields) => {
-      if (error) throw error;
-      if (!results.length) {
-        cs.status = 400;
-      }
-      console.log("client done");
-        console.log(cs);
-    })
-  } catch (e) {
-    console.log(error);
-    return 0;
-  }
-  setTimeout(() => {
-    sqlq = 'SELECT pid FROM userdata WHERE (id LIKE \'' + id + '\') AND (pw LIKE \'' + pw + '\')'
 
-    try {
-      db_conn.query(sqlq, async (error, results, fields) => {
-        if (error) throw error;
-        if (!results.length) cs.status = 400;
-
-        console.log("id done");
-          console.log(cs);
-        // 세션 ID 생성
-        var sessid = randomString(64)
-
-        // DB
-        var rid = 1 // mysql autoincrease
-
-        // 응답용 JSON 작성
-
-          console.log(cs);
-        while(1) {
-          // /console.log(cs);
-          if (cs.getStatus()) {
-            res.status(cs.getStatus())
-            // pid, 자동 로그인 토큰 전송
-            if (cs.getStatus() === 200) {
-              res.send({
-                type: 'response',
-                rid: '16진수',
-
-                is_vaild: true,
-                requested_data: 'sessid',
-                response_data: sessid
-              });
-              return;
-            } else {
-              res.send();
-              return;
-            }
-            setTimeout(() => {return 0}, 20)
-          }
-        }
-      });
-    } catch (e) {
-      console.log(e);
-      return 0;
-    }
-  }, 20)
-
-  /*Promise.try(() => {
-    db_conn.query(sqlq, (error, results, fields) => {
-      if (error) throw error;
-      if (!results.length) {
-        throw new Error('df');
-      }
-      return;
-    });
-  ).catch((e) => {
-    res.status(400)
-    res.send()
-    return 0;
-  })
-  // clientid, id, hashed 존재 검증
-
-
-
-
-
-  sqlq = 'SELECT pid FROM userdata WHERE (id LIKE \'' + id + '\') AND (pw LIKE \'' + pw + '\')'
-
-  try {
-    db_conn.query(sqlq, (error, results, fields) => {
-      if (error) throw error;
-      if (!results.length) throw new Error(1);
-
-
-    });
-  } catch (e) {
-    res.status(400)
-    res.send()
-    return 0;
-  }*/
-
+  await db_conn.query(sqlq, (error, results, fields) => {
+    if (error) throw error;
+    console.log(results[0].client_data);
+  });
 });
 
 
@@ -335,43 +243,4 @@ var jsonChecker = (_json, variablesArray, isMustFilled) => {
   }
   return 1;
 }
-class conn_status {
-  constructor() {
-    this.status = 0;
-    this.rid = 0;
-  }
-  setStatus(status) {
-    this.status = status;
-    console.log(status);
-    console.log(this.status);
-  }
-  getStatus() {
-    if (this.status) {
-      return this.status;
-    }
-    return 0;
-  }
-  setrid() {
-    this.rid = rid;
-  }
-  getrid() {
-    this.rid = rid;
-  }
-}
-
-class sid_infobox {
-  constructor() {
-    this.status = 0;
-  }
-  setStatus(status) {
-    this.status = status;
-  }
-  getStatus() {
-    return this.status;
-  }
-  responser() {
-
-  }
-}
-
 module.exports = router;
