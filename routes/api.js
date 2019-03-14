@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyparser = require('body-parser');
-const mysql = require('mysql');
+const mysql = require('mysql2/promise');
 const passport = require('passport');
-const async = require('async');
+//const async = require('async');
 const router = express.Router();
 
 var db_conn = mysql.createConnection({
@@ -11,7 +11,6 @@ var db_conn = mysql.createConnection({
   password: 'Wb4H9nn542',
   database: 'sid_userdata'
 })
-db_conn.connect();
 
 router.all('/', (req, res, next) => {
   var output = {
@@ -24,7 +23,8 @@ router.all('/', (req, res, next) => {
 });
 
 /* login related functions. */
-router.post('/login', async (req, res, next) => {
+router.post('/login', async (req, res, next, lc = new loginContainer()) => {
+
   // POST DATA 무결성 검증
   if (!(req.body.type === 'login' && jsonChecker(req.body, ['clientid', 'userid', 'password'], [true, true, true]))) {
     res.status(400)
@@ -38,10 +38,14 @@ router.post('/login', async (req, res, next) => {
   var clientid = req.body.clientid // receive POST json CID
   var sqlq = 'SELECT client_data FROM client_list WHERE (clientid LIKE \'' + req.body.clientid + '\')';
 
-  await db_conn.query(sqlq, (error, results, fields) => {
+  var pid = await db_conn.query(sqlq, (error, results, fields) => {
     if (error) throw error;
     console.log(results[0].client_data);
+    return results;
   });
+  await console.log(lc.getCid());
+  res.status(200);
+  res.send('test');
 });
 
 
@@ -243,4 +247,24 @@ var jsonChecker = (_json, variablesArray, isMustFilled) => {
   }
   return 1;
 }
+
+class loginContainer {
+  constructor() {
+    this.cid = 0;
+    this.pid = 0;
+  }
+  setCid(cid) {
+    this.cid = cid;
+  }
+  setPid(pid) {
+    this.pid = pid;
+  }
+  getCid() {
+    return cid;
+  }
+  getPid() {
+    return pid;
+  }
+}
+
 module.exports = router;
