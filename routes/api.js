@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyparser = require('body-parser');
-const mysql = require('mysql2/promise');
+const mysql = require('mysql');
 const passport = require('passport');
 //const async = require('async');
 const router = express.Router();
@@ -11,6 +11,8 @@ var db_conn = mysql.createConnection({
   password: 'Wb4H9nn542',
   database: 'sid_userdata'
 })
+
+db_conn.connect();
 
 router.all('/', (req, res, next) => {
   var output = {
@@ -36,16 +38,49 @@ router.post('/login', async (req, res, next, lc = new loginContainer()) => {
   var id = req.body.userid // receive POST json ID
   var pw = req.body.password // receive POST json hashed PW
   var clientid = req.body.clientid // receive POST json CID
-  var sqlq = 'SELECT client_data FROM client_list WHERE (clientid LIKE \'' + req.body.clientid + '\')';
 
-  var pid = await db_conn.query(sqlq, (error, results, fields) => {
+  await db_conn.query('SELECT client_data FROM client_list WHERE (clientid LIKE \'' + req.body.clientid + '\')', async (error, results, fields) => {
     if (error) throw error;
-    console.log(results[0].client_data);
-    return results;
+    if (results.length < 1) {
+      await res.status(400);
+      await res.send({
+        type: 'error',
+
+        is_vaild: false,
+        error: 'Error with Client ID'
+      });
+      return;
+    }
+    db_conn.query('SELECT pid FROM userdata WHERE (id LIKE \'' + id + '\') AND (pw LIKE \'' + pw + '\')', async (error, results, fields) => {
+      if (error) throw error;
+      if (results.length < 1) {
+        await res.status(400);
+        await res.send({
+          type: 'error',
+
+          is_vaild: false,
+          error: 'Error with User Information'
+        });
+        return;
+      }
+
+      await res.status(200);
+      await res.send({
+        type: 'response',
+        rid: '16진수',
+
+        is_vaild: true,
+        requested_data: [
+          'sessid',
+          'pid'
+        ],
+        response_data: [
+          randomString(64),
+          results[0].pid,
+        ]
+      });
+    });
   });
-  await console.log(lc.getCid());
-  res.status(200);
-  res.send('test');
 });
 
 
