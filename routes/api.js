@@ -111,11 +111,24 @@ router.post('/register', (req, res, next) => {
     nickname: ''
   }
 
+  // POST DATA 무결성 검증
+  if (!(req.body.type === 'register' && jsonChecker(req.body, ['clientid', 'userid', 'password'], [true, true, true]))) {
+    res.status(400)
+    res.send({
+      type: 'error',
+
+      is_vaild: false,
+      error: 'Missing Arguments. Require Client ID, User ID, Password'
+    });
+    return;
+  }
+
+  db_conn.query(`INSERT INTO userdata ()`)
+
   res.status(200)
   // 정상 작동 여부 전송
   var output = {
     type: 'response',
-
 
     is_vaild: true,
     is_succeed: true
