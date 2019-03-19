@@ -30,7 +30,12 @@ router.post('/login', async (req, res, next, lc = new loginContainer()) => {
   // POST DATA 무결성 검증
   if (!(req.body.type === 'login' && jsonChecker(req.body, ['clientid', 'userid', 'password'], [true, true, true]))) {
     res.status(400)
-    res.send()
+    res.send({
+      type: 'error',
+
+      is_vaild: false,
+      error: 'Missing Arguments. Require Client ID, User ID, Password'
+    });
     return;
   }
 
