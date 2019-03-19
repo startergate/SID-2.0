@@ -68,29 +68,38 @@ router.post('/login', async (req, res, next, lc = new loginContainer()) => {
         });
         return;
       }
+      var expireData = new Date();
+      expireData.setUTCMonth((expireData.getUTCMonth() + 3) % 11)
+      if ((expireData.getUTCMonth() + 3) / 11 > 1) {
+        expireData.setUTCFullYear(expireData.getUTCFullYear() + 1)
+      }
+      expireData = expireData.toISOString().slice(0, 19).replace('T', ' ');
+      sessid = randomString(64)
+
+      db_conn.query(`INSERT INTO session_list (sessid, pid, clientid, expire) VALUES ('${sessid}', '${results[0].pid}', '${clientid}', '${expireData}')`, (error, results, fields) => {
+        if (error) throw error;
+      })
 
       await res.status(200);
       await res.send({
         type: 'response',
-        rid: '16진수',
+
 
         is_vaild: true,
         requested_data: [
           'sessid',
-          'pid'
+          'pid',
+          'expire'
         ],
         response_data: [
-          randomString(64),
+          sessid,
           results[0].pid,
+          expireData
         ]
       });
     });
   });
 });
-
-
-
-
 
 router.post('/register', (req, res, next) => {
   var input = {
@@ -106,7 +115,7 @@ router.post('/register', (req, res, next) => {
   // 정상 작동 여부 전송
   var output = {
     type: 'response',
-    rid: '16진수',
+
 
     is_vaild: true,
     is_succeed: true
@@ -124,7 +133,7 @@ router.post('/logout', function(req, res, next) {
   // 세션 ID 저장용 테이블 생성 필요
   var output = {
     type: 'response',
-    rid: '16진수',
+
 
     is_vaild: true,
     is_succeed: true
@@ -150,7 +159,7 @@ router.post('/get/:data', function(req, res, next) {
   // 받아온 데이터
   var output = {
     type: 'response',
-    rid: '16진수',
+
 
     is_vaild: true,
     requested_data: 'usname/pfimg',
@@ -203,7 +212,7 @@ router.post('/verify/:data', function(req, res, next) {
   // 0, 1
   var output = {
     type: 'response',
-    rid: '16진수',
+
 
     is_vaild: true
   }
@@ -223,7 +232,7 @@ router.post('/modify/:data', function(req, res, next) {
   res.status(200)
   var output = {
     type: 'response',
-    rid: '16진수',
+
 
     is_vaild: true,
     is_processed: true,
