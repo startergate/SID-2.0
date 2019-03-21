@@ -43,9 +43,9 @@ router.post('/login', async (req, res, next) => {
   }
 
   // TODO: SQL 인젝션 대비 필요
-  var id = req.body.userid; // receive POST json ID
-  var pw = req.body.password; // receive POST json hashed PW
-  var clientid = req.body.clientid; // receive POST json CID
+  var id = db_conn.escape(req.body.userid); // receive POST json ID
+  var pw = req.body.password; // receive POST json PW
+  var clientid = db_conn.escape(req.body.clientid); // receive POST json CID
 
   await db_conn.query('SELECT client_data FROM client_list WHERE (clientid LIKE \'' + req.body.clientid + '\')', async (error, results, fields) => {
     if (error) throw error;
@@ -128,10 +128,10 @@ router.post('/register', async (req, res, next) => {
     return;
   }
 
-  var id = req.body.userid; // receive POST json ID
-  var pw = req.body.password; // receive POST json hashed PW
-  var clientid = req.body.clientid; // receive POST json CID
-  var nickname = req.body.nickname; // receive POST json CID
+  var id = db_conn.escape(req.body.userid); // receive POST json ID
+  var pw = req.body.password; // receive POST json PW
+  var clientid = db_conn.escape(req.body.clientid); // receive POST json CID
+  var nickname = db_conn.escape(req.body.nickname); // receive POST json CID
   if (nickname == '') {
     nickname = id;
   }
