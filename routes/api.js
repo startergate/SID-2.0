@@ -9,7 +9,8 @@ const sha256 = require('js-sha256').sha256;
 const router = express.Router();
 
 var db_conn = mysql.createConnection({
-  host: 'db.donote.co',
+  //host: 'db.donote.co',
+  host: '54.180.27.126',
   user: 'root',
   password: 'Wb4H9nn542',
   database: 'sid_userdata'
@@ -48,7 +49,18 @@ router.post('/login', async (req, res, next) => {
   var clientid = db_conn.escape(req.body.clientid); // receive POST json CID
 
   await db_conn.query('SELECT client_data FROM client_list WHERE (clientid LIKE \'' + req.body.clientid + '\')', async (error, results, fields) => {
-    if (error) throw error;
+    if (error) {
+      console.log(error);
+      res.status(500);
+      // 정상 작동 여부 전송
+      res.send({
+        type: 'response',
+
+        is_vaild: true,
+        is_succeed: false
+      });
+      return;
+    }
     if (results.length < 1) {
       await res.status(400);
       await res.send({
@@ -61,8 +73,19 @@ router.post('/login', async (req, res, next) => {
     }
 
     pw = sha256(pw);
-    db_conn.query('SELECT pid FROM userdata WHERE (id LIKE \'' + id + '\') AND (pw LIKE \'' + pw + '\')', async (error, results, fields) => {
-      if (error) throw error;
+    db_conn.query('SELECT pid FROM userdata WHERE (id LIKE ' + id + ') AND (pw LIKE \'' + pw + '\')', async (error, results, fields) => {
+      if (error) {
+        console.log(error);
+        res.status(500);
+        // 정상 작동 여부 전송
+        res.send({
+          type: 'response',
+
+          is_vaild: true,
+          is_succeed: false
+        });
+        return;
+      }
       if (results.length < 1) {
         await res.status(400);
         await res.send({
@@ -81,14 +104,13 @@ router.post('/login', async (req, res, next) => {
       expireData = expireData.toISOString().slice(0, 19).replace('T', ' ');
       sessid = randomString(64);
 
-      db_conn.query(`INSERT INTO session_list (sessid, pid, clientid, expire) VALUES ('${sessid}', '${results[0].pid}', '${clientid}', '${expireData}')`, (error, results, fields) => {
-        if (error) throw error;
+      db_conn.query(`INSERT INTO session_list (sessid, pid, clientid, expire) VALUES ('${sessid}', '${results[0].pid}', ${clientid}, '${expireData}')`, (error, results, fields) => {
+        if (error) console.log(error);
       });
 
       await res.status(200);
       await res.send({
         type: 'response',
-
 
         is_vaild: true,
         requested_data: [
@@ -107,15 +129,6 @@ router.post('/login', async (req, res, next) => {
 });
 
 router.post('/register', async (req, res, next) => {
-  var input = {
-    type: 'register',
-    clientid: 1234,
-
-    userid: 'userid',
-    password: 'non-hashed',
-    nickname: ''
-  };
-
   // POST DATA 무결성 검증
   if (!(req.body.type === 'register' && jsonChecker(req.body, ['clientid', 'userid', 'password'], [true, true, true]))) {
     res.status(400);
@@ -137,7 +150,18 @@ router.post('/register', async (req, res, next) => {
   }
 
   await db_conn.query('SELECT client_data FROM client_list WHERE (clientid LIKE \'' + req.body.clientid + '\')', async (error, results, fields) => {
-    if (error) throw error;
+    if (error) {
+      console.log(error);
+      res.status(500);
+      // 정상 작동 여부 전송
+      res.send({
+        type: 'response',
+
+        is_vaild: true,
+        is_succeed: false
+      });
+      return;
+    }
     if (results.length < 1) {
       await res.status(400);
       await res.send({
@@ -150,7 +174,7 @@ router.post('/register', async (req, res, next) => {
     }
     pw = sha256(pw);
     sessid = randomString(32);
-    db_conn.query(`INSERT INTO userdata (id,pw,nickname,register_date,pid) VALUES('${id}', '${pw}', '${nickname}', now(), '${sessid}')`, async (error, results, fields) => {
+    db_conn.query(`INSERT INTO userdata (id,pw,nickname,register_date,pid) VALUES(${id}, '${pw}', ${nickname}, now(), '${sessid}')`, async (error, results, fields) => {
       if (error) {
         console.log(error);
         res.status(500);
@@ -177,24 +201,65 @@ router.post('/register', async (req, res, next) => {
 });
 
 router.post('/logout', function(req, res, next) {
-  var input = {
-    type: 'logout',
-    clientid: 1234,
+  // POST DATA 무결성 검증
+  if (!(req.body.type === 'logout' && jsonChecker(req.body, ['clientid', 'sessid'], [true, true]))) {
+    res.status(400);
+    res.send({
+      type: 'error',
 
-    sessid: '16진수'
-  };
-  // 세션 ID 저장용 테이블 생성 필요
-  var output = {
-    type: 'response',
+      is_vaild: false,
+      error: 'Missing Arguments. Require Client ID, Session ID'
+    });
+    return;
+  }
+  sessid = db_conn.escape(req.body.sessid);
+  clientid = db_conn.escape(req.body.clientid);
+  db_conn.query(`SELECT pid FROM session_list WHERE (sessid LIKE ${sessid}) AND (clientid LIKE ${clientid})`, (error, results, fields) => {
+    if (error) {
+      console.log(error);
+      res.status(500);
+      // 정상 작동 여부 전송
+      res.send({
+        type: 'response',
+
+        is_vaild: true,
+        is_succeed: false
+      });
+      return;
+    }
+    if (results.length < 1) {
+      res.status(400);
+      res.send({
+        type: 'error',
+
+        is_vaild: false,
+        error: 'Error with Session ID or Client ID'
+      });
+      return;
+    }
+    db_conn.query(`DELETE FROM session_list WHERE sessid=${sessid}`, (error, results, fields) => {
+      if (error) {
+        console.log(error);
+        res.status(500);
+        // 정상 작동 여부 전송
+        res.send({
+          type: 'response',
+
+          is_vaild: true,
+          is_succeed: false
+        });
+        return;
+      }
+      res.status(200);
+      res.send({
+        type: 'response',
 
 
-    is_vaild: true,
-    is_succeed: true
-  };
-  // 자동 로그인 토큰 삭제 필요
-  res.status(200);
-  // 1
-  res.send('respond with a resource');
+        is_vaild: true,
+        is_succeed: true
+      });
+    });
+  });
 });
 
 /* info modifier. */
@@ -232,14 +297,14 @@ router.post('/create/:data/', function(req, res, next) {
     client_data: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36 OPR/58.0.3135.79'
 
   }*/
-  createProcessor: {
-    if (req.body.data === 'clientid') {
-      //db_conn.
-    } else if (req.body.data === 'aulokey') {
+  switch (req.body.data) {
+    case 'clientid':
 
-    } else {
-      break createProcessor;
-    }
+      break;
+    case 'aulokey':
+
+      break;
+    default:
 
   }
   // auto-login key
