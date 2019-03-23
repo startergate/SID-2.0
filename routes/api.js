@@ -104,7 +104,7 @@ router.post('/login', async (req, res, next) => {
       expireData = expireData.toISOString().slice(0, 19).replace('T', ' ');
       sessid = randomString(64);
 
-      db_conn.query(`INSERT INTO session_list (sessid, pid, clientid, expire) VALUES ('${sessid}', '${results[0].pid}', ${clientid}, '${expireData}')`, (error, results, fields) => {
+      db_conn.query('INSERT INTO session_list (sessid, pid, clientid, expire) VALUES (\'' + sessid + '\', \'' + results[0].pid + '\', \'' + clientid + '\', \'' + expireData + '\')', (error, results, fields) => {
         if (error) console.log(error);
       });
 
@@ -174,7 +174,7 @@ router.post('/register', async (req, res, next) => {
     }
     pw = sha256(pw);
     sessid = randomString(32);
-    db_conn.query(`INSERT INTO userdata (id,pw,nickname,register_date,pid) VALUES(${id}, '${pw}', ${nickname}, now(), '${sessid}')`, async (error, results, fields) => {
+    db_conn.query('INSERT INTO userdata (id,pw,nickname,register_date,pid) VALUES(\'' + id + '\', \'' + pw + '\', \'' + nickname + '\', now(), \'' + sessid + '\')', async (error, results, fields) => {
       if (error) {
         console.log(error);
         res.status(500);
@@ -212,9 +212,10 @@ router.post('/logout', function(req, res, next) {
     });
     return;
   }
+
   sessid = db_conn.escape(req.body.sessid);
   clientid = db_conn.escape(req.body.clientid);
-  db_conn.query(`SELECT pid FROM session_list WHERE (sessid LIKE ${sessid}) AND (clientid LIKE ${clientid})`, (error, results, fields) => {
+  db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE \'' + sessid + '\') AND (clientid LIKE \'' + clientid + '\')', (error, results, fields) => {
     if (error) {
       console.log(error);
       res.status(500);
@@ -237,7 +238,7 @@ router.post('/logout', function(req, res, next) {
       });
       return;
     }
-    db_conn.query(`DELETE FROM session_list WHERE sessid=${sessid}`, (error, results, fields) => {
+    db_conn.query('DELETE FROM session_list WHERE sessid=\'' + sessid + '\'', (error, results, fields) => {
       if (error) {
         console.log(error);
         res.status(500);
@@ -271,6 +272,18 @@ router.post('/get/:data', function(req, res, next) {
 
     sessid: '16진수'
   };
+  // POST DATA 무결성 검증
+  if (!(req.body.type === 'get' && jsonChecker(req.body, ['data', 'clientid', 'sessid'], [true, true, true]))) {
+    res.status(400);
+    res.send({
+      type: 'error',
+
+      is_vaild: false,
+      error: 'Missing Arguments. Require Client ID, Session ID'
+    });
+    return;
+  }
+
 
   // username, profile img
   res.status(200);
