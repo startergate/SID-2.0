@@ -104,7 +104,7 @@ router.post('/login', async (req, res, next) => {
       expireData = expireData.toISOString().slice(0, 19).replace('T', ' ');
       sessid = randomString(64);
 
-      db_conn.query('INSERT INTO session_list (sessid, pid, clientid, expire) VALUES (\'' + sessid + '\', \'' + results[0].pid + '\', \'' + clientid + '\', \'' + expireData + '\')', (error, results, fields) => {
+      db_conn.query('INSERT INTO session_list (sessid, pid, clientid, expire) VALUES (\'' + sessid + '\', \'' + results[0].pid + '\', ' + clientid + ', \'' + expireData + '\')', (error, results, fields) => {
         if (error) console.log(error);
       });
 
@@ -174,7 +174,7 @@ router.post('/register', async (req, res, next) => {
     }
     pw = sha256(pw);
     sessid = randomString(32);
-    db_conn.query('INSERT INTO userdata (id,pw,nickname,register_date,pid) VALUES(\'' + id + '\', \'' + pw + '\', \'' + nickname + '\', now(), \'' + sessid + '\')', async (error, results, fields) => {
+    db_conn.query('INSERT INTO userdata (id,pw,nickname,register_date,pid) VALUES(' + id + ', \'' + pw + '\', ' + nickname + ', now(), \'' + sessid + '\')', async (error, results, fields) => {
       if (error) {
         console.log(error);
         res.status(500);
@@ -215,7 +215,7 @@ router.post('/logout', function(req, res, next) {
 
   sessid = db_conn.escape(req.body.sessid);
   clientid = db_conn.escape(req.body.clientid);
-  db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE \'' + sessid + '\') AND (clientid LIKE \'' + clientid + '\')', (error, results, fields) => {
+  db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
     if (error) {
       console.log(error);
       res.status(500);
@@ -238,7 +238,7 @@ router.post('/logout', function(req, res, next) {
       });
       return;
     }
-    db_conn.query('DELETE FROM session_list WHERE sessid=\'' + sessid + '\'', (error, results, fields) => {
+    db_conn.query('DELETE FROM session_list WHERE sessid=' + sessid, (error, results, fields) => {
       if (error) {
         console.log(error);
         res.status(500);
@@ -283,8 +283,9 @@ router.post('/get/:data', function(req, res, next) {
     });
     return;
   }
-
-  db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE \'' + sessid + '\') AND (clientid LIKE \'' + clientid + '\')', (error, results, fields) => {
+  sessid = db_conn.escape(req.body.sessid);
+  clientid = db_conn.escape(req.body.clientid);
+  db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
     if (error) {
       console.log(error);
       res.status(500);
@@ -309,7 +310,7 @@ router.post('/get/:data', function(req, res, next) {
     }
     switch (req.body.data) {
       case 'usname':
-        db_conn.query('SELECT id FROM userdata WHERE pid=\'' + result[0].pid + '\'', (error, results, fields) => {
+        db_conn.query('SELECT id FROM userdata WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
           if (error) {
             console.log(error);
             res.status(500);
@@ -334,6 +335,29 @@ router.post('/get/:data', function(req, res, next) {
         });
         break;
       case 'pfimg':
+        db_conn.query('SELECT profile_img FROM userdata WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
+          if (error) {
+            console.log(error);
+            res.status(500);
+            // 정상 작동 여부 전송
+            res.send({
+              type: 'response',
+
+              is_vaild: true,
+              is_succeed: false
+            });
+            return;
+          }
+          res.status(200);
+          res.send({
+            type: 'response',
+
+
+            is_vaild: true,
+            requested_data: 'pfimg',
+            response_data: results[0].profile_img
+          });
+        });
         break;
       default:
         res.status(400);
@@ -347,19 +371,7 @@ router.post('/get/:data', function(req, res, next) {
     }
   });
 
-
   // username, profile img
-  res.status(200);
-  // 받아온 데이터
-  var output = {
-    type: 'response',
-
-
-    is_vaild: true,
-    requested_data: 'usname/pfimg',
-    response_data: 'string'
-  };
-  res.send('respond with a resource');
 });
 
 /* create data. currently useless */
@@ -459,14 +471,6 @@ var randomString = function(length) {
   }
 
   return rendom_str;
-};
-
-var logCreater = (type, time, datatype) => {
-  if (type == 'error') {
-    // error_recorder
-  } else {
-    // response_log
-  }
 };
 
 var jsonChecker = (_json, variablesArray, isMustFilled) => {
