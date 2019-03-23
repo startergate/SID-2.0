@@ -279,10 +279,73 @@ router.post('/get/:data', function(req, res, next) {
       type: 'error',
 
       is_vaild: false,
-      error: 'Missing Arguments. Require Client ID, Session ID'
+      error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID'
     });
     return;
   }
+
+  db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE \'' + sessid + '\') AND (clientid LIKE \'' + clientid + '\')', (error, results, fields) => {
+    if (error) {
+      console.log(error);
+      res.status(500);
+      // 정상 작동 여부 전송
+      res.send({
+        type: 'response',
+
+        is_vaild: true,
+        is_succeed: false
+      });
+      return;
+    }
+    if (results.length < 1) {
+      res.status(400);
+      res.send({
+        type: 'error',
+
+        is_vaild: false,
+        error: 'Error with Session ID or Client ID'
+      });
+      return;
+    }
+    switch (req.body.data) {
+      case 'usname':
+        db_conn.query('SELECT id FROM userdata WHERE pid=\'' + result[0].pid + '\'', (error, results, fields) => {
+          if (error) {
+            console.log(error);
+            res.status(500);
+            // 정상 작동 여부 전송
+            res.send({
+              type: 'response',
+
+              is_vaild: true,
+              is_succeed: false
+            });
+            return;
+          }
+          res.status(200);
+          res.send({
+            type: 'response',
+
+
+            is_vaild: true,
+            requested_data: 'usname',
+            response_data: results[0].id
+          });
+        });
+        break;
+      case 'pfimg':
+        break;
+      default:
+        res.status(400);
+        res.send({
+          type: 'error',
+
+          is_vaild: false,
+          error: 'Invaild Requested Data Type'
+        });
+        return;
+    }
+  });
 
 
   // username, profile img
