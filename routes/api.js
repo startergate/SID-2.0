@@ -371,7 +371,7 @@ router.post('/get/:data', function(req, res, next) {
 router.post('/create/:data/', function(req, res, next) {
   var input = {
     type: 'create',
-    data: 'clientid/auloid',
+    data: 'clientid',
     clientid: 1234,
 
     sessid: '16진수', // clientid의 경우 없음
@@ -379,32 +379,66 @@ router.post('/create/:data/', function(req, res, next) {
 
   };
   // POST DATA 무결성 검증
-  if (!(req.body.type === 'create' && jsonChecker(req.body, ['data', 'clientid'], [true, true]))) {
+  if (!(req.body.type === 'create' && jsonChecker(req.body, ['data'], [true]))) {
     res.status(400);
     res.send({
       type: 'error',
 
       is_vaild: false,
-      error: 'Missing Arguments. Require Requested Data Type, Client ID'
+      error: 'Missing Arguments. Require Requested Data Type'
     });
     return;
   }
   switch (req.body.data) {
     case 'clientid':
+      if (!jsonChecker(req.body, ['devicedata'], [true])) {
+        res.status(400);
+        res.send({
+          type: 'error',
 
-      break;
-    case 'aulokey':
+          is_vaild: false,
+          error: 'Missing Arguments. Require Requested Data Type'
+        });
+        return;
+      }
+      devicedata = db_conn.escape(req.body.devicedata);
+      clientid = randomString(64);
+      db_conn.query('INSERT INTO client_list (clientid, client_data) VALUES(\'' + clientid + '\', ' + devicedata + ')', async (error, results, fields) => {
+        if (error) {
+          console.log(error);
+          res.status(500);
+          // 정상 작동 여부 전송
+          res.send({
+            type: 'response',
 
+            is_vaild: true,
+            is_succeed: false
+          });
+          return;
+        }
+
+        res.status(200);
+        // 정상 작동 여부 전송
+        res.send({
+          type: 'response',
+
+          is_vaild: true,
+          is_succeed: true,
+
+          requested_data: clientid
+        });
+      });
       break;
     default:
+      res.status(400);
+      res.send({
+        type: 'error',
 
+        is_vaild: false,
+        error: 'Invaild Requested Data Type'
+      });
+      return;
   }
-  // auto-login key
-  res.status(404);
-  // 정상 작동 여부 전송
-  res.send({
-    message: 'use vaild data type'
-  });
 });
 
 router.post('/verify/:data', function(req, res, next) {
