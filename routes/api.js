@@ -445,6 +445,18 @@ router.post('/verify/:data', function(req, res, next) {
     sessid: '16진수', // sessid 제외
     value: '16진수'
   };
+  // POST DATA 무결성 검증
+  if (!(req.body.type === 'verify' && jsonChecker(req.body, ['data', 'clientid', 'sessid', 'value'], [true, true, true, true]))) {
+    res.status(400);
+    res.send({
+      type: 'error',
+
+      is_vaild: false,
+      error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID, Value'
+    });
+    return;
+  }
+
   // password, auto-login key, sessid
   res.status(200);
   // 0, 1
@@ -459,8 +471,8 @@ router.post('/verify/:data', function(req, res, next) {
 
 router.post('/modify/:data', function(req, res, next) {
   var input = {
-    type: 'create',
-    data: 'aulokey',
+    type: 'modify',
+    data: 'password/nickname',
     clientid: 1234,
 
     sessid: '16진수'
@@ -475,7 +487,9 @@ router.post('/modify/:data', function(req, res, next) {
     is_vaild: true,
     is_processed: true,
 
-    original_data: '1234'
+    data: 'password/nickname',
+    original_data: '1234',
+    modified_data: '5678'
   };
   res.send('respond with a resource');
 });
