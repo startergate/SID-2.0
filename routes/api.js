@@ -108,6 +108,10 @@ router.post('/login', async (req, res, next) => {
         if (error) console.log(error);
       });
 
+      db_conn.query('UPDATE client_list SET recent_login=now(), recent_id=' + id + ' WHERE clientid=' + clientid, (error, results, fields) => {
+        if (error) console.log(error);
+      });
+
       await res.status(200);
       await res.send({
         type: 'response',
@@ -369,15 +373,6 @@ router.post('/get/:data', function(req, res, next) {
 
 /* create data. currently useless */
 router.post('/create/:data/', function(req, res, next) {
-  var input = {
-    type: 'create',
-    data: 'clientid',
-    clientid: 1234,
-
-    sessid: '16진수', // clientid의 경우 없음
-    client_data: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36 OPR/58.0.3135.79'
-
-  };
   // POST DATA 무결성 검증
   if (!(req.body.type === 'create' && jsonChecker(req.body, ['data'], [true]))) {
     res.status(400);
