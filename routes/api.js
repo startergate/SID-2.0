@@ -439,14 +439,14 @@ router.post('/create/:data/', function(req, res, next) {
 router.post('/verify/:data', function(req, res, next) {
   var input = {
     type: 'verify',
-    data: 'password/aulokey/sessid',
+    data: 'password/sessid',
     clientid: 1234,
 
     sessid: '16진수', // sessid 제외
     value: '16진수'
   };
   // POST DATA 무결성 검증
-  if (!(req.body.type === 'verify' && jsonChecker(req.body, ['data', 'clientid', 'sessid', 'value'], [true, true, true, true]))) {
+  if (!(req.body.type === 'verify' && jsonChecker(req.body, ['data', 'clientid', 'sessid'], [true, true, true]))) {
     res.status(400);
     res.send({
       type: 'error',
@@ -457,16 +457,104 @@ router.post('/verify/:data', function(req, res, next) {
     return;
   }
 
-  // password, auto-login key, sessid
-  res.status(200);
-  // 0, 1
-  var output = {
-    type: 'response',
+  sessid = db_conn.escape(req.body.sessid);
+  clientid = db_conn.escape(req.body.clientid);
+  db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
+    if (error) {
+      console.log(error);
+      res.status(500);
+      // 정상 작동 여부 전송
+      res.send({
+        type: 'response',
 
+        is_vaild: true,
+        is_succeed: false
+      });
+      return;
+    }
+    if (req.body.data === 'sessid') {
+      if (results.length < 1) {
+        res.status(200);
+        res.send({
+          type: 'response',
 
-    is_vaild: true
-  };
-  res.send('respond with a resource');
+          is_vaild: false
+        });
+      } else {
+        res.status(200);
+        res.send({
+          type: 'response',
+
+          is_vaild: true
+        });
+      }
+      return;
+    }
+    if (results.length < 1) {
+      res.status(400);
+      res.send({
+        type: 'error',
+
+        is_vaild: false,
+        error: 'Invaild Session ID or Client ID'
+      });
+      return;
+    }
+    switch (req.body.data) {
+      case 'password':
+        if (!jsonChecker(req.body, ['data', 'clientid', 'sessid', 'value'], [true, true, true, true])) {
+          res.status(400);
+          res.send({
+            type: 'error',
+
+            is_vaild: false,
+            error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID, Value'
+          });
+          return;
+        }
+        db_conn.query('SELECT pw FROM userdata WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
+          if (error) {
+            console.log(error);
+            res.status(500);
+            // 정상 작동 여부 전송
+            res.send({
+              type: 'response',
+
+              is_vaild: true,
+              is_succeed: false
+            });
+            return;
+          }
+          if (results[0].pw === sha256(req.body.value)) {
+            res.status(200);
+            res.send({
+              type: 'response',
+
+              is_vaild: true
+            });
+          } else {
+            res.status(200);
+            res.send({
+              type: 'response',
+
+              is_vaild: false
+            });
+          }
+        });
+        break;
+
+      default:
+        res.status(400);
+        res.send({
+          type: 'error',
+
+          is_vaild: false,
+          error: 'Invaild Requested Data Type'
+        });
+        return;
+    }
+  });
+  // password, sessid
 });
 
 router.post('/modify/:data', function(req, res, next) {
