@@ -630,7 +630,7 @@ router.post('/modify/:data', function(req, res, next) {
           });
         });
         break;
-
+        // TODO: Add nickname change
       default:
         res.status(400);
         res.send({
