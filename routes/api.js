@@ -20,7 +20,7 @@ db_conn.connect();
 
 router.all('/', (req, res, next) => {
   var output = {
-    type: 'response',
+    type: 'error',
 
     is_vaild: false,
     description: 'Request to ROOT directory of api is prohibited'
@@ -54,7 +54,7 @@ router.post('/login', async (req, res, next) => {
       res.status(500);
       // 정상 작동 여부 전송
       res.send({
-        type: 'response',
+        type: 'error',
 
         is_vaild: true,
         is_succeed: false
@@ -79,7 +79,7 @@ router.post('/login', async (req, res, next) => {
         res.status(500);
         // 정상 작동 여부 전송
         res.send({
-          type: 'response',
+          type: 'error',
 
           is_vaild: true,
           is_succeed: false
@@ -159,7 +159,7 @@ router.post('/register', async (req, res, next) => {
       res.status(500);
       // 정상 작동 여부 전송
       res.send({
-        type: 'response',
+        type: 'error',
 
         is_vaild: true,
         is_succeed: false
@@ -225,7 +225,7 @@ router.post('/logout', function(req, res, next) {
       res.status(500);
       // 정상 작동 여부 전송
       res.send({
-        type: 'response',
+        type: 'error',
 
         is_vaild: true,
         is_succeed: false
@@ -248,7 +248,7 @@ router.post('/logout', function(req, res, next) {
         res.status(500);
         // 정상 작동 여부 전송
         res.send({
-          type: 'response',
+          type: 'error',
 
           is_vaild: true,
           is_succeed: false
@@ -288,7 +288,7 @@ router.post('/get/:data', function(req, res, next) {
       res.status(500);
       // 정상 작동 여부 전송
       res.send({
-        type: 'response',
+        type: 'error',
 
         is_vaild: true,
         is_succeed: false
@@ -313,7 +313,7 @@ router.post('/get/:data', function(req, res, next) {
             res.status(500);
             // 정상 작동 여부 전송
             res.send({
-              type: 'response',
+              type: 'error',
 
               is_vaild: true,
               is_succeed: false
@@ -404,7 +404,7 @@ router.post('/create/:data/', function(req, res, next) {
           res.status(500);
           // 정상 작동 여부 전송
           res.send({
-            type: 'response',
+            type: 'error',
 
             is_vaild: true,
             is_succeed: false
@@ -465,7 +465,7 @@ router.post('/verify/:data', function(req, res, next) {
       res.status(500);
       // 정상 작동 여부 전송
       res.send({
-        type: 'response',
+        type: 'error',
 
         is_vaild: true,
         is_succeed: false
@@ -563,23 +563,86 @@ router.post('/modify/:data', function(req, res, next) {
     data: 'password/nickname',
     clientid: 1234,
 
-    sessid: '16진수'
+    sessid: '16진수',
+    value: '1234'
   };
 
+  // POST DATA 무결성 검증
+  if (!(req.body.type === 'modify' && jsonChecker(req.body, ['data', 'clientid', 'sessid', 'value'], [true, true, true, true]))) {
+    res.status(400);
+    res.send({
+      type: 'error',
+
+      is_vaild: false,
+      error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID, Value'
+    });
+    return;
+  }
+
+  sessid = db_conn.escape(req.body.sessid);
+  clientid = db_conn.escape(req.body.clientid);
+  db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
+    if (error) {
+      console.log(error);
+      res.status(500);
+      // 정상 작동 여부 전송
+      res.send({
+        type: 'error',
+
+        is_vaild: true,
+        is_succeed: false
+      });
+      return;
+    }
+
+    if (results.length < 1) {
+      res.status(400);
+      res.send({
+        type: 'error',
+
+        is_vaild: false,
+        error: 'Invaild Session ID or Client ID'
+      });
+      return;
+    }
+    value = sha256(req.body.value);
+    switch (req.body.data) {
+      case 'password':
+        db_conn.query('UPDATE userdata SET pw=\'' + value + '\' WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
+          if (error) {
+            console.log(error);
+            res.status(500);
+            // 정상 작동 여부 전송
+            res.send({
+              type: 'response',
+
+              is_vaild: true,
+              is_succeed: false
+            });
+            return;
+          }
+          res.status(200);
+          res.send({
+            type: 'response',
+
+            is_vaild: true,
+            is_processed: true
+          });
+        });
+        break;
+
+      default:
+        res.status(400);
+        res.send({
+          type: 'error',
+
+          is_vaild: false,
+          error: 'Invaild Requested Data Type'
+        });
+        return;
+    }
+  });
   // password, nickname
-  res.status(200);
-  var output = {
-    type: 'response',
-
-
-    is_vaild: true,
-    is_processed: true,
-
-    data: 'password/nickname',
-    original_data: '1234',
-    modified_data: '5678'
-  };
-  res.send('respond with a resource');
 });
 
 var checkExist = function(targetDB, targetName, targetValue, valueType = 'string') {
