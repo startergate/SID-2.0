@@ -4,6 +4,7 @@ const express = require('express');
 const bodyparser = require('body-parser');
 const mysql = require('mysql');
 const passport = require('passport');
+const md5 = require('md5');
 const sha256 = require('js-sha256').sha256;
 //const async = require('async');
 const router = express.Router();
@@ -73,7 +74,7 @@ router.post('/login', async (req, res, next) => {
     }
 
     pw = sha256(pw);
-    db_conn.query('SELECT pid FROM userdata WHERE (id LIKE ' + id + ') AND (pw LIKE \'' + pw + '\')', async (error, results, fields) => {
+    db_conn.query('SELECT nickname, pid FROM userdata WHERE (id LIKE ' + id + ') AND (pw LIKE \'' + pw + '\')', async (error, results, fields) => {
       if (error) {
         console.log(error);
         res.status(500);
@@ -120,11 +121,13 @@ router.post('/login', async (req, res, next) => {
         requested_data: [
           'sessid',
           'pid',
+          'nickname',
           'expire'
         ],
         response_data: [
           sessid,
           results[0].pid,
+          results[0].nickname,
           expireData
         ]
       });
@@ -176,9 +179,9 @@ router.post('/register', async (req, res, next) => {
       });
       return;
     }
+    var pid = md5(id + pw + id);
     pw = sha256(pw);
-    sessid = randomString(32);
-    db_conn.query('INSERT INTO userdata (id,pw,nickname,register_date,pid) VALUES(' + id + ', \'' + pw + '\', ' + nickname + ', now(), \'' + sessid + '\')', async (error, results, fields) => {
+    db_conn.query('INSERT INTO userdata (id,pw,nickname,register_date,pid) VALUES(' + id + ', \'' + pw + '\', ' + nickname + ', now(), \'' + pid + '\')', async (error, results, fields) => {
       if (error) {
         console.log(error);
         res.status(500);
@@ -198,7 +201,8 @@ router.post('/register', async (req, res, next) => {
         type: 'response',
 
         is_vaild: true,
-        is_succeed: true
+        is_succeed: true,
+        private_id: pid
       });
     });
   });
