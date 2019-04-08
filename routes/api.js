@@ -44,7 +44,6 @@ router.post('/login', async (req, res, next) => {
     return;
   }
 
-  // TODO: SQL 인젝션 대비 필요
   var id = db_conn.escape(req.body.userid); // receive POST json ID
   var pw = req.body.password; // receive POST json PW
   var clientid = db_conn.escape(req.body.clientid); // receive POST json CID
@@ -97,10 +96,15 @@ router.post('/login', async (req, res, next) => {
         });
         return;
       }
-      var expireData = new Date();
-      expireData.setUTCMonth((expireData.getUTCMonth() + 3) % 11);
-      if ((expireData.getUTCMonth() + 3) / 11 > 1) {
-        expireData.setUTCFullYear(expireData.getUTCFullYear() + 1);
+      var expireData;
+      if (req.body.isPermanent) {
+        expireData = new Date(0);
+      } else {
+        expireData = new Date();
+        expireData.setUTCMonth((expireData.getUTCMonth() + 3) % 11);
+        if ((expireData.getUTCMonth() + 3) / 11 > 1) {
+          expireData.setUTCFullYear(expireData.getUTCFullYear() + 1);
+        }
       }
       expireData = expireData.toISOString().slice(0, 19).replace('T', ' ');
       sessid = randomString(64);
