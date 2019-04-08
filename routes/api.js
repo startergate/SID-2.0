@@ -26,6 +26,7 @@ router.all('/', (req, res, next) => {
     is_vaild: false,
     description: 'Request to ROOT directory of api is prohibited'
   };
+  res.status(400);
   res.send(output);
 });
 
@@ -43,7 +44,8 @@ router.post('/login', async (req, res, next) => {
       return;
     }
     var clientid = db_conn.escape(req.body.clientid); // receive POST json CID
-    await db_conn.query('SELECT client_data FROM client_list WHERE (clientid LIKE \'' + clientid + '\')', async (error, results, fields) => {
+    var sessid = db_conn.escape(req.body.sessid);
+    db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
       if (error) {
         console.log(error);
         res.status(500);
@@ -57,47 +59,67 @@ router.post('/login', async (req, res, next) => {
         return;
       }
       if (results.length < 1) {
-        await res.status(400);
-        await res.send({
+        res.status(400);
+        res.send({
           type: 'error',
 
           is_vaild: false,
-          error: 'Error with Client ID'
+          error: 'Error with Session ID or Client ID'
         });
         return;
       }
-      expireData = new Date();
-      expireData.setUTCMonth((expireData.getUTCMonth() + 3) % 11);
-      if ((expireData.getUTCMonth() + 3) / 11 > 1) {
-        expireData.setUTCFullYear(expireData.getUTCFullYear() + 1);
-      }
-      expireData = expireData.toISOString().slice(0, 19).replace('T', ' ');
+      db_conn.query('SELECT nickname, pid FROM userdata WHERE pid LIKE \'' + results[0].pid + '\'', async (error, result, fields) => {
+        if (error) {
+          console.log(error);
+          res.status(500);
+          // 정상 작동 여부 전송
+          res.send({
+            type: 'error',
 
-      db_conn.query('INSERT INTO session_list (sessid, pid, clientid, expire) VALUES (\'' + sessid + '\', \'' + results[0].pid + '\', ' + clientid + ', \'' + expireData + '\')', (error, results, fields) => {
-        if (error) console.log(error);
-      });
+            is_vaild: true,
+            is_succeed: false
+          });
+          return;
+        }
+        if (results.length < 1) {
+          await res.status(400);
+          await res.send({
+            type: 'error',
 
-      db_conn.query('UPDATE session_list SET expire=' + expireData + ' WHERE sessid=' + clientid, (error, results, fields) => {
-        if (error) console.log(error);
-      });
+            is_vaild: false,
+            error: 'Error with User Information'
+          });
+          return;
+        }
+        expireData = new Date();
+        expireData.setUTCMonth((expireData.getUTCMonth() + 3) % 11);
+        if ((expireData.getUTCMonth() + 3) / 11 > 1) {
+          expireData.setUTCFullYear(expireData.getUTCFullYear() + 1);
+        }
+        expireData = expireData.toISOString().slice(0, 19).replace('T', ' ');
 
-      await res.status(200);
-      await res.send({
-        type: 'response',
+        db_conn.query('UPDATE session_list SET expire=' + expireData + ' WHERE sessid=' + sessid, (error, results, fields) => {
+          if (error) console.log(error);
+        });
 
-        is_vaild: true,
-        requested_data: [
-          'sessid',
-          'pid',
-          'nickname',
-          'expire'
-        ],
-        response_data: [
-          sessid,
-          results[0].pid,
-          results[0].nickname,
-          expireData
-        ]
+        res.status(200);
+        res.send({
+          type: 'response',
+
+          is_vaild: true,
+          requested_data: [
+            'sessid',
+            'pid',
+            'nickname',
+            'expire'
+          ],
+          response_data: [
+            sessid,
+            results[0].pid,
+            result[0].nickname,
+            expireData
+          ]
+        });
       });
     });
   } else if (!(req.body.type === 'login' && jsonChecker(req.body, ['clientid', 'userid', 'password'], [true, true, true]))) { // POST DATA 무결성 검증
