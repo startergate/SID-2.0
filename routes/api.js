@@ -43,7 +43,7 @@ router.post('/login', async (req, res, next) => {
       });
       return;
     }
-    var clientid = db_conn.escape(req.body.clientid); // receive POST json CID
+    let clientid = db_conn.escape(req.body.clientid); // receive POST json CID
     var sessid = db_conn.escape(req.body.sessid);
     db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
       if (error) {
@@ -134,7 +134,7 @@ router.post('/login', async (req, res, next) => {
   } else {
     var id = db_conn.escape(req.body.userid); // receive POST json ID
     var pw = req.body.password; // receive POST json PW
-    var clientid = db_conn.escape(req.body.clientid); // receive POST json CID
+    let clientid = db_conn.escape(req.body.clientid); // receive POST json CID
     await db_conn.query('SELECT client_data FROM client_list WHERE (clientid LIKE ' + clientid + ')', async (error, results, fields) => {
       if (error) {
         console.log(error);
