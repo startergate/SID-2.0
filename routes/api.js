@@ -135,7 +135,7 @@ router.post('/login', async (req, res, next) => {
     var id = db_conn.escape(req.body.userid); // receive POST json ID
     var pw = req.body.password; // receive POST json PW
     var clientid = db_conn.escape(req.body.clientid); // receive POST json CID
-    await db_conn.query('SELECT client_data FROM client_list WHERE (clientid LIKE \'' + clientid + '\')', async (error, results, fields) => {
+    await db_conn.query('SELECT client_data FROM client_list WHERE (clientid LIKE ' + clientid + ')', async (error, results, fields) => {
       if (error) {
         console.log(error);
         res.status(500);
@@ -251,7 +251,7 @@ router.post('/register', async (req, res, next) => {
     nickname = id;
   }
 
-  await db_conn.query('SELECT client_data FROM client_list WHERE (clientid LIKE \'' + req.body.clientid + '\')', async (error, results, fields) => {
+  await db_conn.query('SELECT client_data FROM client_list WHERE (clientid LIKE ' + clientid + ')', async (error, results, fields) => {
     if (error) {
       console.log(error);
       res.status(500);
