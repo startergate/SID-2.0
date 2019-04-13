@@ -448,7 +448,6 @@ router.post('/get/:data', function(req, res, next) {
           res.send({
             type: 'response',
 
-
             is_vaild: true,
             requested_data: 'pfimg',
             response_data: results[0].profile_img
@@ -519,7 +518,8 @@ router.post('/create/:data/', function(req, res, next) {
           is_vaild: true,
           is_succeed: true,
 
-          requested_data: clientid
+          requested_data: 'clientid',
+          response_data: clientid
         });
       });
       break;
