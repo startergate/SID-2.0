@@ -536,14 +536,6 @@ router.post('/create/:data/', function(req, res, next) {
 });
 
 router.post('/verify/:data', function(req, res, next) {
-  var input = {
-    type: 'verify',
-    data: 'password/sessid',
-    clientid: 1234,
-
-    sessid: '16진수', // sessid 제외
-    value: '16진수'
-  };
   // POST DATA 무결성 검증
   if (!(req.body.type === 'verify' && jsonChecker(req.body, ['data', 'clientid', 'sessid'], [true, true, true]))) {
     res.status(400);
@@ -657,15 +649,6 @@ router.post('/verify/:data', function(req, res, next) {
 });
 
 router.post('/modify/:data', function(req, res, next) {
-  var input = {
-    type: 'modify',
-    data: 'password/nickname',
-    clientid: 1234,
-
-    sessid: '16진수',
-    value: '1234'
-  };
-
   // POST DATA 무결성 검증
   if (!(req.body.type === 'modify' && jsonChecker(req.body, ['data', 'clientid', 'sessid', 'value'], [true, true, true, true]))) {
     res.status(400);
