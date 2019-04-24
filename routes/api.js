@@ -648,7 +648,8 @@ router.post('/verify/:data', function(req, res, next) {
   // password, sessid
 });
 
-router.post('/modify/:data', function(req, res, next) {
+// modify
+router.put('/:data', function(req, res, next) {
   // POST DATA 무결성 검증
   if (!(req.body.type === 'modify' && jsonChecker(req.body, ['data', 'clientid', 'sessid', 'value'], [true, true, true, true]))) {
     res.status(400);
