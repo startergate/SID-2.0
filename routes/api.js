@@ -367,20 +367,9 @@ router.post('/logout', function(req, res, next) {
 });
 
 /* info modifier. */
-router.post('/get/:data', function(req, res, next) {
-  // POST DATA 무결성 검증
-  if (!(req.body.type === 'get' && jsonChecker(req.body, ['data', 'clientid', 'sessid'], [true, true, true]))) {
-    res.status(400);
-    res.send({
-      type: 'error',
-
-      is_vaild: false,
-      error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID'
-    });
-    return;
-  }
-  sessid = db_conn.escape(req.body.sessid);
-  clientid = db_conn.escape(req.body.clientid);
+router.get('/:clientid/:sessid/:data', function(req, res, next) {
+  sessid = db_conn.escape(req.params.sessid);
+  clientid = db_conn.escape(req.params.clientid);
   db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
     if (error) {
       console.log(error);
@@ -404,7 +393,7 @@ router.post('/get/:data', function(req, res, next) {
       });
       return;
     }
-    switch (req.body.data) {
+    switch (req.params.data) {
       case 'usname':
         db_conn.query('SELECT id FROM userdata WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
           if (error) {
