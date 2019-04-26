@@ -458,9 +458,9 @@ router.get('/:clientid/:sessid/:data', function(req, res, next) {
 });
 
 /* create data. currently useless */
-router.post('/create/:data/', function(req, res, next) {
+router.post('/:type/', function(req, res, next) {
   // POST DATA 무결성 검증
-  if (!(req.body.type === 'create' && jsonChecker(req.body, ['data'], [true]))) {
+  if (!(req.body.type === req.params.type && jsonChecker(req.body, ['data'], [true]))) {
     res.status(400);
     res.send({
       type: 'error',
@@ -470,7 +470,7 @@ router.post('/create/:data/', function(req, res, next) {
     });
     return;
   }
-  switch (req.body.data) {
+  switch (req.params.type) {
     case 'clientid':
       if (!jsonChecker(req.body, ['devicedata'], [true])) {
         res.status(400);
