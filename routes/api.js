@@ -523,15 +523,15 @@ router.post('/:type/', function(req, res, next) {
   }
 });
 
-router.post('/verify/:data', function(req, res, next) {
+router.post('/:data/verify', function(req, res, next) {
   // POST DATA 무결성 검증
-  if (!(req.body.type === 'verify' && jsonChecker(req.body, ['data', 'clientid', 'sessid'], [true, true, true]))) {
+  if (!(req.body.data === req.params.data && jsonChecker(req.body, ['data', 'clientid', 'sessid'], [true, true, true]))) {
     res.status(400);
     res.send({
       type: 'error',
 
       is_vaild: false,
-      error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID, Value'
+      error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID'
     });
     return;
   }
