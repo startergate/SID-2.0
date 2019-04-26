@@ -31,7 +31,7 @@ router.all('/', (req, res, next) => {
 });
 
 /* login related functions. */
-router.post('/login', async (req, res, next) => {
+router.post('/session', async (req, res, next) => {
   if ('sessid' in req.body) {
     if (!(req.body.type === 'login' && jsonChecker(req.body, ['clientid', 'sessid'], [true, true]))) { // POST DATA 무결성 검증
       res.status(400);
