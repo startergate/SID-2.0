@@ -303,7 +303,7 @@ router.post('/register', async (req, res, next) => {
   });
 });
 
-router.post('/logout', function(req, res, next) {
+router.delete('/session', (req, res, next) => {
   // POST DATA 무결성 검증
   if (!(req.body.type === 'logout' && jsonChecker(req.body, ['clientid', 'sessid'], [true, true]))) {
     res.status(400);
@@ -357,7 +357,6 @@ router.post('/logout', function(req, res, next) {
       res.status(200);
       res.send({
         type: 'response',
-
 
         is_vaild: true,
         is_succeed: true
