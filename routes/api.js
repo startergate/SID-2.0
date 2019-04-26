@@ -230,7 +230,7 @@ router.post('/session', async (req, res, next) => {
 
 });
 
-router.post('/register', async (req, res, next) => {
+router.post('/user', async (req, res, next) => {
   // POST DATA 무결성 검증
   if (!(req.body.type === 'register' && jsonChecker(req.body, ['clientid', 'userid', 'password'], [true, true, true]))) {
     res.status(400);
