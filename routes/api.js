@@ -115,7 +115,7 @@ router.post('/session', async (req, res, next) => {
           ],
           response_data: [
             sessid,
-            results[0].pid,
+            results[0].pid, // 바깥 쪽에서 가져옴
             result[0].nickname,
             expireData
           ]
