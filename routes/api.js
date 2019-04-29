@@ -31,7 +31,7 @@ router.all('/', (req, res, next) => {
 });
 
 /* login related functions. */
-router.post('/login', async (req, res, next) => {
+router.post('/session', async (req, res, next) => {
   if ('sessid' in req.body) {
     if (!(req.body.type === 'login' && jsonChecker(req.body, ['clientid', 'sessid'], [true, true]))) { // POST DATA 무결성 검증
       res.status(400);
@@ -115,7 +115,7 @@ router.post('/login', async (req, res, next) => {
           ],
           response_data: [
             sessid,
-            results[0].pid,
+            results[0].pid, // 바깥 쪽에서 가져옴
             result[0].nickname,
             expireData
           ]
@@ -230,7 +230,7 @@ router.post('/login', async (req, res, next) => {
 
 });
 
-router.post('/register', async (req, res, next) => {
+router.post('/user', async (req, res, next) => {
   // POST DATA 무결성 검증
   if (!(req.body.type === 'register' && jsonChecker(req.body, ['clientid', 'userid', 'password'], [true, true, true]))) {
     res.status(400);
@@ -303,7 +303,7 @@ router.post('/register', async (req, res, next) => {
   });
 });
 
-router.post('/logout', function(req, res, next) {
+router.delete('/session', (req, res, next) => {
   // POST DATA 무결성 검증
   if (!(req.body.type === 'logout' && jsonChecker(req.body, ['clientid', 'sessid'], [true, true]))) {
     res.status(400);
@@ -358,7 +358,6 @@ router.post('/logout', function(req, res, next) {
       res.send({
         type: 'response',
 
-
         is_vaild: true,
         is_succeed: true
       });
@@ -367,20 +366,9 @@ router.post('/logout', function(req, res, next) {
 });
 
 /* info modifier. */
-router.post('/get/:data', function(req, res, next) {
-  // POST DATA 무결성 검증
-  if (!(req.body.type === 'get' && jsonChecker(req.body, ['data', 'clientid', 'sessid'], [true, true, true]))) {
-    res.status(400);
-    res.send({
-      type: 'error',
-
-      is_vaild: false,
-      error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID'
-    });
-    return;
-  }
-  sessid = db_conn.escape(req.body.sessid);
-  clientid = db_conn.escape(req.body.clientid);
+router.get('/:clientid/:sessid/:data', function(req, res, next) {
+  sessid = db_conn.escape(req.params.sessid);
+  clientid = db_conn.escape(req.params.clientid);
   db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
     if (error) {
       console.log(error);
@@ -404,7 +392,7 @@ router.post('/get/:data', function(req, res, next) {
       });
       return;
     }
-    switch (req.body.data) {
+    switch (req.params.data) {
       case 'usname':
         db_conn.query('SELECT id FROM userdata WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
           if (error) {
@@ -470,9 +458,9 @@ router.post('/get/:data', function(req, res, next) {
 });
 
 /* create data. currently useless */
-router.post('/create/:data/', function(req, res, next) {
+router.post('/:type/', function(req, res, next) {
   // POST DATA 무결성 검증
-  if (!(req.body.type === 'create' && jsonChecker(req.body, ['data'], [true]))) {
+  if (!(req.body.type === req.params.type && jsonChecker(req.body, ['data'], [true]))) {
     res.status(400);
     res.send({
       type: 'error',
@@ -482,7 +470,7 @@ router.post('/create/:data/', function(req, res, next) {
     });
     return;
   }
-  switch (req.body.data) {
+  switch (req.params.type) {
     case 'clientid':
       if (!jsonChecker(req.body, ['devicedata'], [true])) {
         res.status(400);
@@ -535,15 +523,15 @@ router.post('/create/:data/', function(req, res, next) {
   }
 });
 
-router.post('/verify/:data', function(req, res, next) {
+router.post('/:data/verify', function(req, res, next) {
   // POST DATA 무결성 검증
-  if (!(req.body.type === 'verify' && jsonChecker(req.body, ['data', 'clientid', 'sessid'], [true, true, true]))) {
+  if (!(req.body.data === req.params.data && jsonChecker(req.body, ['data', 'clientid', 'sessid'], [true, true, true]))) {
     res.status(400);
     res.send({
       type: 'error',
 
       is_vaild: false,
-      error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID, Value'
+      error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID'
     });
     return;
   }
@@ -648,7 +636,8 @@ router.post('/verify/:data', function(req, res, next) {
   // password, sessid
 });
 
-router.post('/modify/:data', function(req, res, next) {
+// modify
+router.put('/:data', function(req, res, next) {
   // POST DATA 무결성 검증
   if (!(req.body.type === 'modify' && jsonChecker(req.body, ['data', 'clientid', 'sessid', 'value'], [true, true, true, true]))) {
     res.status(400);
