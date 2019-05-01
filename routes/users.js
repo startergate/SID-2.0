@@ -1,9 +1,19 @@
+/*jshint esversion: 9 */
+
 var express = require('express');
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+router.get('/', (req, res, next) => {
+  res.redirect('/users/info');
+});
+
+router.get('/info', (req, res, next) => {
+  res.render('something');
+});
+
+router.get('/edit', (req, res, next) => {
+  res.end('dev');
 });
 
 module.exports = router;
