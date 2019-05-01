@@ -225,9 +225,6 @@ router.post('/session', async (req, res, next) => {
       });
     });
   }
-
-
-
 });
 
 router.post('/user', async (req, res, next) => {
@@ -678,6 +675,30 @@ router.put('/:data', function(req, res, next) {
     }
     value = req.body.value;
     switch (req.body.data) {
+      case 'id':
+        value = sha256(req.body.value);
+        db_conn.query('UPDATE userdata SET id=\'' + value + '\' WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
+          if (error) {
+            console.log(error);
+            res.status(500);
+            // 정상 작동 여부 전송
+            res.send({
+              type: 'response',
+
+              is_vaild: true,
+              is_succeed: false
+            });
+            return;
+          }
+          res.status(200);
+          res.send({
+            type: 'response',
+
+            is_vaild: true,
+            is_processed: true
+          });
+        });
+        break;
       case 'password':
         value = sha256(req.body.value);
         db_conn.query('UPDATE userdata SET pw=\'' + value + '\' WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
