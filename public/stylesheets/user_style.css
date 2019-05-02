@@ -32,9 +32,15 @@ body {
   border-radius: 8px;
 }
 
-@media (min-width: 300px) {
+@media (min-width: 306.1px) {
   .profileWrapper {
     width: 300px;
+  }
+}
+
+@media (max-width: 306px) {
+  .profileWrapper {
+    width: 98vh;
   }
 }
 
