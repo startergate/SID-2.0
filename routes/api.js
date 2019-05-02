@@ -454,10 +454,9 @@ router.get('/:clientid/:sessid/:data', function(req, res, next) {
   // username, profile img
 });
 
-/* create data. currently useless */
-router.post('/:type/', function(req, res, next) {
+router.post('/:data/', function(req, res, next) {
   // POST DATA 무결성 검증
-  if (!(req.body.type === req.params.type && jsonChecker(req.body, ['data'], [true]))) {
+  if (!(req.body.data === req.params.data && jsonChecker(req.body, ['data'], [true]))) {
     res.status(400);
     res.send({
       type: 'error',
@@ -467,7 +466,7 @@ router.post('/:type/', function(req, res, next) {
     });
     return;
   }
-  switch (req.params.type) {
+  switch (req.params.data) {
     case 'clientid':
       if (!jsonChecker(req.body, ['devicedata'], [true])) {
         res.status(400);
