@@ -225,9 +225,6 @@ router.post('/session', async (req, res, next) => {
       });
     });
   }
-
-
-
 });
 
 router.post('/user', async (req, res, next) => {
@@ -457,10 +454,9 @@ router.get('/:clientid/:sessid/:data', function(req, res, next) {
   // username, profile img
 });
 
-/* create data. currently useless */
-router.post('/:type/', function(req, res, next) {
+router.post('/:data/', function(req, res, next) {
   // POST DATA 무결성 검증
-  if (!(req.body.type === req.params.type && jsonChecker(req.body, ['data'], [true]))) {
+  if (!(req.body.data === req.params.data && jsonChecker(req.body, ['data'], [true]))) {
     res.status(400);
     res.send({
       type: 'error',
@@ -470,7 +466,7 @@ router.post('/:type/', function(req, res, next) {
     });
     return;
   }
-  switch (req.params.type) {
+  switch (req.params.data) {
     case 'clientid':
       if (!jsonChecker(req.body, ['devicedata'], [true])) {
         res.status(400);
@@ -678,6 +674,30 @@ router.put('/:data', function(req, res, next) {
     }
     value = req.body.value;
     switch (req.body.data) {
+      case 'id':
+        value = sha256(req.body.value);
+        db_conn.query('UPDATE userdata SET id=\'' + value + '\' WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
+          if (error) {
+            console.log(error);
+            res.status(500);
+            // 정상 작동 여부 전송
+            res.send({
+              type: 'response',
+
+              is_vaild: true,
+              is_succeed: false
+            });
+            return;
+          }
+          res.status(200);
+          res.send({
+            type: 'response',
+
+            is_vaild: true,
+            is_processed: true
+          });
+        });
+        break;
       case 'password':
         value = sha256(req.body.value);
         db_conn.query('UPDATE userdata SET pw=\'' + value + '\' WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {

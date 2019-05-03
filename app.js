@@ -9,8 +9,9 @@ const logger = require('morgan');
 const passport = require('passport');
 
 var indexRouter = require('./routes/index');
-var userRouter = require('./routes/users');
+var userRouter = require('./routes/user');
 var apiRouter = require('./routes/api');
+var docsRouter = require('./routes/docs');
 
 var app = express();
 
@@ -38,14 +39,15 @@ app.use((req, res, next) => {
 app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/api', apiRouter);
+app.use('/docs', docsRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use((err, req, res, next) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
