@@ -1,5 +1,11 @@
+@import url(//fonts.googleapis.com/earlyaccess/notosanskr.css);
 body {
   background-color: #3d414d;
+  font-family: Noto Sans KR;
+}
+
+input {
+  text-align: center;
 }
 
 .backGround {
@@ -26,7 +32,7 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  padding: 20px;
+  padding: 37px;
   text-align: center;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -53,10 +59,23 @@ body {
 }
 
 .sidUserInputNoBorder {
-  border: 0;
+  border: 1px solid transparent;
+}
+
+.sidUserInputNoBorder:hover {
+  border: 1px solid #ccc;
+}
+
+.sidUserInputNoBorder:active {
+  border: 1px solid #ccc;
 }
 
 .sidUserSave {
+  position: absolute;
+  border: 1px solid #3d414d;
+  border-radius: 5px;
+  background: #3d414d;
+  color: white;
   right: 5px;
   bottom: 5px;
 }
