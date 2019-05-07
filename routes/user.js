@@ -11,8 +11,8 @@ router.get('/', (req, res, next) => {
 
 router.get('/info', (req, res, next) => {
   if (!jsonChecker(req.query, ['sessid'], [true])) {
-    res.render('user/login.ejs')
-    return
+    res.render('user/login.ejs');
+    return;
   }
   res.render('user/info.ejs', {
     'nickname': req.session.sidNickname,
