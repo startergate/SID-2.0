@@ -14,11 +14,11 @@
     <img src="http://donote.co/static/img/common/donotepfo.png" alt="" class="sidProfileImg rounded-circle">
     <div style="height:20px"></div>
     <div>
-      <input type="text" class="sidUserInputNoBorder" id="userNickname" name="" value="" placeholder="닉네임 입력">
+      <input type="text" class="sidUserInputNoBorder" id="userNickname" name="sidNickname" value="<%= nickname %>" placeholder="닉네임 입력">
       <hr>
       <div>
-        <input type="text" class="sidUserInput" id="userId" name="" value="" placeholder="아이디 입력">
-        <input type="password" class="sidUserInput" id="userPassword" name="" value="" placeholder="비밀번호 입력">
+        <input type="text" class="sidUserInput" id="userId" name="sidID" value="<%= id %>" placeholder="아이디 입력">
+        <input type="password" class="sidUserInput" id="userPassword" name="sidPassword" value="<%= password %>" placeholder="비밀번호 입력">
       </div>
     </div>
     <button type="button" name="button" class="sidUserSave">Save</button>
