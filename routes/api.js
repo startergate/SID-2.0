@@ -98,7 +98,7 @@ router.post('/session', async (req, res, next) => {
         }
         expireData = expireData.toISOString().slice(0, 19).replace('T', ' ');
 
-        db_conn.query('UPDATE session_list SET expire=' + expireData + ' WHERE sessid=' + sessid, (error, results, fields) => {
+        db_conn.query('UPDATE session_list SET expire="' + expireData + '" WHERE sessid=' + sessid, (error, results, fields) => {
           if (error) console.log(error);
         });
 
@@ -114,7 +114,7 @@ router.post('/session', async (req, res, next) => {
             'expire'
           ],
           response_data: [
-            sessid,
+            sessid.split("'").join(""),
             results[0].pid, // 바깥 쪽에서 가져옴
             result[0].nickname,
             expireData
@@ -802,7 +802,7 @@ var jsonChecker = (_json, variablesArray, isMustFilled) => {
   }
   if (cnt !== variablesArray.length) return 0;
   for (var variable in variablesArray) {
-    if (!_json.hasOwnProperty(variablesArray[variable])) return 0;
+    if (!Object.prototype.hasOwnProperty.call(_json, variablesArray[variable])) return 0;
   }
   return 1;
 };

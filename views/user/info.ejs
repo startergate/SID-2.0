@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <title>User Information | SID 2.0</title>
-  <link rel="stylesheet" href="/stylesheets/user_style.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="/stylesheets/user_style.css">
 </head>
 
 <body class="fullScreen">
@@ -14,9 +14,12 @@
     <img src="http://donote.co/static/img/common/donotepfo.png" alt="" class="sidProfileImg rounded-circle">
     <div style="height:20px"></div>
     <div>
-      <input type="text" class="sidUserInputNoBorder" id="userId" name="" value="">
-      <input type="password" class="sidUserInput" id="userPassword" name="" value="">
-      <input type="text" class="sidUserInput" id="userNickname" name="" value="">
+      <input type="text" class="sidUserInputNoBorder" id="userNickname" name="sidNickname" value="<%= nickname %>" placeholder="닉네임 입력">
+      <hr>
+      <div>
+        <input type="text" class="sidUserInput" id="userId" name="sidID" value="<%= id %>" placeholder="아이디 입력">
+        <input type="password" class="sidUserInput" id="userPassword" name="sidPassword" value="<%= password %>" placeholder="비밀번호 입력">
+      </div>
     </div>
     <button type="button" name="button" class="sidUserSave">Save</button>
   </div>

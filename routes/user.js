@@ -1,6 +1,7 @@
 /*jshint esversion: 9 */
 
 var express = require('express');
+var session = require('express-session');
 var router = express.Router();
 
 /* GET users listing. */
@@ -9,26 +10,36 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/info', (req, res, next) => {
-  res.render('user/info.ejs');
-});
-
-router.put('/edit/:type', (req, res, next) => {
-  switch (req.params.type) {
-    case 'id':
-
-      break;
-    case 'pw':
-
-      break;
-    case 'pfimg':
-
-      break;
-    default:
-      req.send({
-        'type': 'error',
-        'error': true
-      });
+  if (!jsonChecker(req.query, ['sessid'], [true])) {
+    res.render('user/login.ejs');
+    return;
   }
+  res.render('user/info.ejs', {
+    'nickname': req.session.sidNickname,
+    'id': req.session.sidUser,
+    'password': req.session.sidPassword
+  });
 });
+
+var jsonChecker = (_json, variablesArray, isMustFilled) => {
+  if (!Array.isArray(variablesArray) || !Array.isArray(isMustFilled)) {
+    throw new TypeError('Input Data is not an array');
+  }
+  if (typeof _json !== 'object') {
+    throw new TypeError('Input Data is not an object');
+  }
+  var cnt = 0;
+  for (var data in _json) {
+    if (variablesArray.indexOf(data) === -1) continue;
+    if (!(_json[data] || !isMustFilled[cnt])) return 0;
+
+    cnt++;
+  }
+  if (cnt !== variablesArray.length) return 0;
+  for (var variable in variablesArray) {
+    if (!_json.hasOwnProperty(variablesArray[variable])) return 0;
+  }
+  return 1;
+};
 
 module.exports = router;
