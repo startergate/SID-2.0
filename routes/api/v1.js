@@ -1,5 +1,4 @@
 /*jshint esversion: 9 */
-// legacy support
 
 const express = require('express');
 const bodyparser = require('body-parser');
@@ -25,8 +24,7 @@ router.all('/', (req, res, next) => {
     type: 'error',
 
     is_vaild: false,
-    description: 'Request to ROOT directory of api is prohibited',
-    warning: 'Update Your SID Client'
+    description: 'Request to ROOT directory of api is prohibited'
   };
   res.status(400);
   res.send(output);
@@ -41,8 +39,7 @@ router.post('/session', async (req, res, next) => {
         type: 'error',
 
         is_vaild: false,
-        error: 'Missing Arguments. Require Client ID, Session ID',
-        warning: 'Update Your SID Client'
+        error: 'Missing Arguments. Require Client ID, Session ID'
       });
       return;
     }
@@ -57,8 +54,7 @@ router.post('/session', async (req, res, next) => {
           type: 'error',
 
           is_vaild: true,
-          is_succeed: false,
-          warning: 'Update Your SID Client'
+          is_succeed: false
         });
         return;
       }
@@ -68,8 +64,7 @@ router.post('/session', async (req, res, next) => {
           type: 'error',
 
           is_vaild: false,
-          error: 'Error with Session ID or Client ID',
-          warning: 'Update Your SID Client'
+          error: 'Error with Session ID or Client ID'
         });
         return;
       }
@@ -82,8 +77,7 @@ router.post('/session', async (req, res, next) => {
             type: 'error',
 
             is_vaild: true,
-            is_succeed: false,
-            warning: 'Update Your SID Client'
+            is_succeed: false
           });
           return;
         }
@@ -93,8 +87,7 @@ router.post('/session', async (req, res, next) => {
             type: 'error',
 
             is_vaild: false,
-            error: 'Error with User Information',
-            warning: 'Update Your SID Client'
+            error: 'Error with User Information'
           });
           return;
         }
@@ -125,8 +118,7 @@ router.post('/session', async (req, res, next) => {
             results[0].pid, // 바깥 쪽에서 가져옴
             result[0].nickname,
             expireData
-          ],
-          warning: 'Update Your SID Client'
+          ]
         });
       });
     });
@@ -136,8 +128,7 @@ router.post('/session', async (req, res, next) => {
       type: 'error',
 
       is_vaild: false,
-      error: 'Missing Arguments. Require Client ID, User ID, Password',
-      warning: 'Update Your SID Client'
+      error: 'Missing Arguments. Require Client ID, User ID, Password'
     });
     return;
   } else {
@@ -163,8 +154,7 @@ router.post('/session', async (req, res, next) => {
           type: 'error',
 
           is_vaild: false,
-          error: 'Error with Client ID',
-          warning: 'Update Your SID Client'
+          error: 'Error with Client ID'
         });
         return;
       }
@@ -179,8 +169,7 @@ router.post('/session', async (req, res, next) => {
             type: 'error',
 
             is_vaild: true,
-            is_succeed: false,
-            warning: 'Update Your SID Client'
+            is_succeed: false
           });
           return;
         }
@@ -190,8 +179,7 @@ router.post('/session', async (req, res, next) => {
             type: 'error',
 
             is_vaild: false,
-            error: 'Error with User Information',
-            warning: 'Update Your SID Client'
+            error: 'Error with User Information'
           });
           return;
         }
@@ -232,8 +220,7 @@ router.post('/session', async (req, res, next) => {
             results[0].pid,
             results[0].nickname,
             expireData
-          ],
-          warning: 'Update Your SID Client'
+          ]
         });
       });
     });
@@ -248,8 +235,7 @@ router.post('/user', async (req, res, next) => {
       type: 'error',
 
       is_vaild: false,
-      error: 'Missing Arguments. Require Client ID, User ID, Password',
-      warning: 'Update Your SID Client'
+      error: 'Missing Arguments. Require Client ID, User ID, Password'
     });
     return;
   }
@@ -271,8 +257,7 @@ router.post('/user', async (req, res, next) => {
         type: 'error',
 
         is_vaild: true,
-        is_succeed: false,
-        warning: 'Update Your SID Client'
+        is_succeed: false
       });
       return;
     }
@@ -282,8 +267,7 @@ router.post('/user', async (req, res, next) => {
         type: 'error',
 
         is_vaild: false,
-        error: 'Error with Client ID',
-        warning: 'Update Your SID Client'
+        error: 'Error with Client ID'
       });
       return;
     }
@@ -298,8 +282,7 @@ router.post('/user', async (req, res, next) => {
           type: 'response',
 
           is_vaild: true,
-          is_succeed: false,
-          warning: 'Update Your SID Client'
+          is_succeed: false
         });
         return;
       }
@@ -311,8 +294,7 @@ router.post('/user', async (req, res, next) => {
 
         is_vaild: true,
         is_succeed: true,
-        private_id: pid,
-        warning: 'Update Your SID Client'
+        private_id: pid
       });
     });
   });
@@ -326,8 +308,7 @@ router.delete('/session', (req, res, next) => {
       type: 'error',
 
       is_vaild: false,
-      error: 'Missing Arguments. Require Client ID, Session ID',
-      warning: 'Update Your SID Client'
+      error: 'Missing Arguments. Require Client ID, Session ID'
     });
     return;
   }
@@ -343,8 +324,7 @@ router.delete('/session', (req, res, next) => {
         type: 'error',
 
         is_vaild: true,
-        is_succeed: false,
-        warning: 'Update Your SID Client'
+        is_succeed: false
       });
       return;
     }
@@ -354,8 +334,7 @@ router.delete('/session', (req, res, next) => {
         type: 'error',
 
         is_vaild: false,
-        error: 'Error with Session ID or Client ID',
-        warning: 'Update Your SID Client'
+        error: 'Error with Session ID or Client ID'
       });
       return;
     }
@@ -368,8 +347,7 @@ router.delete('/session', (req, res, next) => {
           type: 'error',
 
           is_vaild: true,
-          is_succeed: false,
-          warning: 'Update Your SID Client'
+          is_succeed: false
         });
         return;
       }
@@ -378,8 +356,7 @@ router.delete('/session', (req, res, next) => {
         type: 'response',
 
         is_vaild: true,
-        is_succeed: true,
-        warning: 'Update Your SID Client'
+        is_succeed: true
       });
     });
   });
@@ -398,8 +375,7 @@ router.get('/:clientid/:sessid/:data', function(req, res, next) {
         type: 'error',
 
         is_vaild: true,
-        is_succeed: false,
-        warning: 'Update Your SID Client'
+        is_succeed: false
       });
       return;
     }
@@ -409,8 +385,7 @@ router.get('/:clientid/:sessid/:data', function(req, res, next) {
         type: 'error',
 
         is_vaild: false,
-        error: 'Error with Session ID or Client ID',
-        warning: 'Update Your SID Client'
+        error: 'Error with Session ID or Client ID'
       });
       return;
     }
@@ -425,8 +400,7 @@ router.get('/:clientid/:sessid/:data', function(req, res, next) {
               type: 'error',
 
               is_vaild: true,
-              is_succeed: false,
-              warning: 'Update Your SID Client'
+              is_succeed: false
             });
             return;
           }
@@ -434,10 +408,10 @@ router.get('/:clientid/:sessid/:data', function(req, res, next) {
           res.send({
             type: 'response',
 
+
             is_vaild: true,
             requested_data: 'usname',
-            response_data: results[0].id,
-            warning: 'Update Your SID Client'
+            response_data: results[0].id
           });
         });
         break;
@@ -451,8 +425,7 @@ router.get('/:clientid/:sessid/:data', function(req, res, next) {
               type: 'response',
 
               is_vaild: true,
-              is_succeed: false,
-              warning: 'Update Your SID Client'
+              is_succeed: false
             });
             return;
           }
@@ -462,8 +435,7 @@ router.get('/:clientid/:sessid/:data', function(req, res, next) {
 
             is_vaild: true,
             requested_data: 'pfimg',
-            response_data: results[0].profile_img,
-            warning: 'Update Your SID Client'
+            response_data: results[0].profile_img
           });
         });
         break;
@@ -473,8 +445,7 @@ router.get('/:clientid/:sessid/:data', function(req, res, next) {
           type: 'error',
 
           is_vaild: false,
-          error: 'Invaild Requested Data Type',
-          warning: 'Update Your SID Client'
+          error: 'Invaild Requested Data Type'
         });
         return;
     }
@@ -491,8 +462,7 @@ router.post('/:data/', function(req, res, next) {
       type: 'error',
 
       is_vaild: false,
-      error: 'Missing Arguments. Require Requested Data Type',
-      warning: 'Update Your SID Client'
+      error: 'Missing Arguments. Require Requested Data Type'
     });
     return;
   }
@@ -504,8 +474,7 @@ router.post('/:data/', function(req, res, next) {
           type: 'error',
 
           is_vaild: false,
-          error: 'Missing Arguments. Require Requested Data Type',
-          warning: 'Update Your SID Client'
+          error: 'Missing Arguments. Require Requested Data Type'
         });
         return;
       }
@@ -520,8 +489,7 @@ router.post('/:data/', function(req, res, next) {
             type: 'error',
 
             is_vaild: true,
-            is_succeed: false,
-            warning: 'Update Your SID Client'
+            is_succeed: false
           });
           return;
         }
@@ -535,8 +503,7 @@ router.post('/:data/', function(req, res, next) {
           is_succeed: true,
 
           requested_data: 'clientid',
-          response_data: clientid,
-          warning: 'Update Your SID Client'
+          response_data: clientid
         });
       });
       break;
@@ -546,8 +513,7 @@ router.post('/:data/', function(req, res, next) {
         type: 'error',
 
         is_vaild: false,
-        error: 'Invaild Requested Data Type',
-        warning: 'Update Your SID Client'
+        error: 'Invaild Requested Data Type'
       });
       return;
   }
@@ -561,8 +527,7 @@ router.post('/:data/verify', function(req, res, next) {
       type: 'error',
 
       is_vaild: false,
-      error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID',
-      warning: 'Update Your SID Client'
+      error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID'
     });
     return;
   }
@@ -578,8 +543,7 @@ router.post('/:data/verify', function(req, res, next) {
         type: 'error',
 
         is_vaild: true,
-        is_succeed: false,
-        warning: 'Update Your SID Client'
+        is_succeed: false
       });
       return;
     }
@@ -589,16 +553,14 @@ router.post('/:data/verify', function(req, res, next) {
         res.send({
           type: 'response',
 
-          is_vaild: false,
-          warning: 'Update Your SID Client'
+          is_vaild: false
         });
       } else {
         res.status(200);
         res.send({
           type: 'response',
 
-          is_vaild: true,
-          warning: 'Update Your SID Client'
+          is_vaild: true
         });
       }
       return;
@@ -609,8 +571,7 @@ router.post('/:data/verify', function(req, res, next) {
         type: 'error',
 
         is_vaild: false,
-        error: 'Invaild Session ID or Client ID',
-        warning: 'Update Your SID Client'
+        error: 'Invaild Session ID or Client ID'
       });
       return;
     }
@@ -622,8 +583,7 @@ router.post('/:data/verify', function(req, res, next) {
             type: 'error',
 
             is_vaild: false,
-            error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID, Value',
-            warning: 'Update Your SID Client'
+            error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID, Value'
           });
           return;
         }
@@ -636,8 +596,7 @@ router.post('/:data/verify', function(req, res, next) {
               type: 'response',
 
               is_vaild: true,
-              is_succeed: false,
-              warning: 'Update Your SID Client'
+              is_succeed: false
             });
             return;
           }
@@ -646,16 +605,14 @@ router.post('/:data/verify', function(req, res, next) {
             res.send({
               type: 'response',
 
-              is_vaild: true,
-              warning: 'Update Your SID Client'
+              is_vaild: true
             });
           } else {
             res.status(200);
             res.send({
               type: 'response',
 
-              is_vaild: false,
-              warning: 'Update Your SID Client'
+              is_vaild: false
             });
           }
         });
@@ -667,8 +624,7 @@ router.post('/:data/verify', function(req, res, next) {
           type: 'error',
 
           is_vaild: false,
-          error: 'Invaild Requested Data Type',
-          warning: 'Update Your SID Client'
+          error: 'Invaild Requested Data Type'
         });
         return;
     }
@@ -685,8 +641,7 @@ router.put('/:data', function(req, res, next) {
       type: 'error',
 
       is_vaild: false,
-      error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID, Value',
-      warning: 'Update Your SID Client'
+      error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID, Value'
     });
     return;
   }
@@ -702,8 +657,7 @@ router.put('/:data', function(req, res, next) {
         type: 'error',
 
         is_vaild: true,
-        is_succeed: false,
-        warning: 'Update Your SID Client'
+        is_succeed: false
       });
       return;
     }
@@ -714,8 +668,7 @@ router.put('/:data', function(req, res, next) {
         type: 'error',
 
         is_vaild: false,
-        error: 'Invaild Session ID or Client ID',
-        warning: 'Update Your SID Client'
+        error: 'Invaild Session ID or Client ID'
       });
       return;
     }
@@ -732,8 +685,7 @@ router.put('/:data', function(req, res, next) {
               type: 'response',
 
               is_vaild: true,
-              is_succeed: false,
-              warning: 'Update Your SID Client'
+              is_succeed: false
             });
             return;
           }
@@ -742,8 +694,7 @@ router.put('/:data', function(req, res, next) {
             type: 'response',
 
             is_vaild: true,
-            is_processed: true,
-            warning: 'Update Your SID Client'
+            is_processed: true
           });
         });
         break;
@@ -758,8 +709,7 @@ router.put('/:data', function(req, res, next) {
               type: 'response',
 
               is_vaild: true,
-              is_succeed: false,
-              warning: 'Update Your SID Client'
+              is_succeed: false
             });
             return;
           }
@@ -768,8 +718,7 @@ router.put('/:data', function(req, res, next) {
             type: 'response',
 
             is_vaild: true,
-            is_processed: true,
-            warning: 'Update Your SID Client'
+            is_processed: true
           });
         });
         break;
@@ -783,8 +732,7 @@ router.put('/:data', function(req, res, next) {
               type: 'response',
 
               is_vaild: true,
-              is_succeed: false,
-              warning: 'Update Your SID Client'
+              is_succeed: false
             });
             return;
           }
@@ -793,8 +741,7 @@ router.put('/:data', function(req, res, next) {
             type: 'response',
 
             is_vaild: true,
-            is_processed: true,
-            warning: 'Update Your SID Client'
+            is_processed: true
           });
         });
         break;
@@ -805,8 +752,7 @@ router.put('/:data', function(req, res, next) {
           type: 'error',
 
           is_vaild: false,
-          error: 'Invaild Requested Data Type',
-          warning: 'Update Your SID Client'
+          error: 'Invaild Requested Data Type'
         });
         return;
     }
