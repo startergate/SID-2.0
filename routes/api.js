@@ -1,4 +1,5 @@
 /*jshint esversion: 9 */
+// legacy support
 
 const express = require('express');
 const bodyparser = require('body-parser');
