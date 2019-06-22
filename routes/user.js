@@ -21,6 +21,18 @@ router.get('/info', (req, res, next) => {
   });
 });
 
+router.get('/login', (req, res, next) => {
+  if (jsonChecker(req.query, ['sessid'], [true])) {
+    res.redirect('/user/info');
+    return;
+  }
+  res.render('user/login.ejs', {
+    'nickname': req.session.sidNickname,
+    'id': req.session.sidUser,
+    'password': req.session.sidPassword
+  });
+});
+
 var jsonChecker = (_json, variablesArray, isMustFilled) => {
   if (!Array.isArray(variablesArray) || !Array.isArray(isMustFilled)) {
     throw new TypeError('Input Data is not an array');
