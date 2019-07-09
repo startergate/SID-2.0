@@ -1,0 +1,160 @@
+body {
+  margin: 0;
+}
+
+.loginText {
+  font-weight: bold;
+  font-family: Noto Sans KR;
+  color: #3d414d;
+  font-size: 30px;
+  width: 100%;
+  margin: 0;
+}
+
+.SIDTITLE {
+  font-size: 20px;
+  font-family: Noto Sans KR;
+  font-weight: thin;
+  margin: 0;
+}
+
+.sidInput {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid #3d414d;
+  padding: 10px 6px;
+  font-size: 15px;
+}
+
+.covra{
+  position:relative;
+  transform: translateY(-50%);
+  background-color: white;
+  padding: 44px;
+  width: 440px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50vh;
+  box-sizing: border-box;
+}
+
+.fullScreen {
+  width: 100%;
+  height: 100%;
+  vertical-align: middle;
+  display: table;
+}
+
+.hidden {
+  display:none;
+}
+
+.btn {
+  border: 0;
+  padding: 10px;
+}
+
+.imgBtn {
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: 0;
+  height: 24px;
+  width: 24px;
+}
+
+.imgBtn:hover {
+  background-color: gainsboro;
+}
+
+.loginBack {
+  font-family: Noto Sans KR;
+  font-weight: 300;
+  font-size: 15px;
+  height: 24px;
+  display:flex;
+}
+
+.identity {
+  line-height: 24px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: inline-block;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (min-width: 1000px){
+  #login{
+    font-size: 3.76vw;
+  }
+}
+@media (max-width: 999.82px) {
+  @media(min-width: 540px) {
+    #login{
+      font-size: 37.6px;
+    }
+  }
+}
+@media (max-width: 539.92px) {
+  #login{
+    font-size: 1.43617vw;
+  }
+}
+#lotext {
+  color: #ffffff;
+}
+@media(min-width: 600px) {
+  .form {
+    width: 300px;
+  }
+}
+@media(max-width: 599.82px){
+  .form {
+    width: 50vw;
+  }
+}
+.domi {
+  font-family: Noto Sans KR;
+  font-style: black;
+  color: #ffffff
+}
+.larger{
+  width: 100%;
+}
+.control {
+  text-align: center;
+  bottom: 8px;
+}
+.cover {
+  position: relative;
+  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  width: 100%;
+}
+.cover.full-window {
+  padding-top: 35vh;
+  text-align: center;
+  width: 100%;
+}
+.btn-light {
+  transition: background 0.3s, transform 0.3s;
+}
+.btn-light:hover {
+  background-color: #949494;
+}
