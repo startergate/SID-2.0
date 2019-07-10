@@ -777,15 +777,16 @@ router.put('/:data', (req, res, next) => {
 });
 
 var checkExist = (targetDB, targetName, targetValue, callback) => {
-  console.log('executed');
   try {
     var sql = "SELECT * FROM " + targetDB + " WHERE " + targetName + " = '" + targetValue + "'";
+    console.log(sql);
     db_conn.query(sql, (error, result, field) => {
       if (error) {
+        console.log(error);
         callback(false);
         return;
       }
-      if (result[0][targetName] === targetValue) {
+      if (result.length < 1) {
         callback(true);
         return;
       }
