@@ -13,9 +13,21 @@ class SID {
     }
     this.clientname = clientname;
   }
+
+  checkID(id, callback) {
+    $.ajax({
+      url: `http://sid.donote.co:3000/api/v1/id/${id}/exist/bool`,
+      type: 'GET',
+      dataType: 'json',
+      success: (data) => {
+        callback(data.is_exist);
+      }
+    });
+  }
+
   getProfile(clientid, sessid, callback) {
     $.ajax({
-      url: 'http://sid.donote.co:3000/api/pfimg',
+      url: 'http://sid.donote.co:3000/api/v1/pfimg',
       type: 'GET',
       dataType: 'json',
       data: {
@@ -46,7 +58,7 @@ class SID {
 
   createClientID(devicedata) {
     $.ajax({
-      url: 'http://sid.donote.co:3000/api/clientid',
+      url: 'http://sid.donote.co:3000/api/v1/clientid',
       type: 'POST',
       dataType: 'json',
       data: {

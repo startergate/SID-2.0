@@ -363,7 +363,7 @@ router.delete('/session', (req, res, next) => {
 });
 
 /* info modifier. */
-router.get('/:clientid/:sessid/:data', function(req, res, next) {
+router.get('/:clientid/:sessid/:data', (req, res, next) => {
   sessid = db_conn.escape(req.params.sessid);
   clientid = db_conn.escape(req.params.clientid);
   db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
@@ -454,7 +454,7 @@ router.get('/:clientid/:sessid/:data', function(req, res, next) {
   // username, profile img
 });
 
-router.post('/:data/', function(req, res, next) {
+router.post('/:data/', (req, res, next) => {
   // POST DATA 무결성 검증
   if (!(req.body.data === req.params.data && jsonChecker(req.body, ['data'], [true]))) {
     res.status(400);
@@ -519,7 +519,7 @@ router.post('/:data/', function(req, res, next) {
   }
 });
 
-router.post('/:data/verify', function(req, res, next) {
+router.post('/:data/verify', (req, res, next) => {
   // POST DATA 무결성 검증
   if (!(req.body.data === req.params.data && jsonChecker(req.body, ['data', 'clientid', 'sessid'], [true, true, true]))) {
     res.status(400);
@@ -632,8 +632,24 @@ router.post('/:data/verify', function(req, res, next) {
   // password, sessid
 });
 
+router.get('/:type/:data/exist/bool', async (req, res, next) => {
+  switch (req.params.type) {
+    case 'id':
+      checkExist('userdata', req.params.type, req.params.data, (is_exist) => {
+        res.send({
+          type: 'response',
+
+          is_exist: is_exist
+        });
+      });
+      return;
+    default:
+      return;
+  }
+});
+
 // modify
-router.put('/:data', function(req, res, next) {
+router.put('/:data', (req, res, next) => {
   // POST DATA 무결성 검증
   if (!(req.body.type === 'modify' && jsonChecker(req.body, ['data', 'clientid', 'sessid', 'value'], [true, true, true, true]))) {
     res.status(400);
@@ -760,21 +776,28 @@ router.put('/:data', function(req, res, next) {
   // password, nickname
 });
 
-var checkExist = function(targetDB, targetName, targetValue, valueType = 'string') {
+var checkExist = (targetDB, targetName, targetValue, callback) => {
+  console.log('executed');
   try {
-    connection.connect();
-    var sql;
-    if (valueType === 'string') {
-      sql = "SELECT * FROM " + targetDB + " WHERE " + targetName + " = '" + targetValue + "'";
-    } else {
-      sql = "SELECT * FROM " + targetDB + " WHERE " + targetName + " = " + targetValue;
-    }
+    var sql = "SELECT * FROM " + targetDB + " WHERE " + targetName + " = '" + targetValue + "'";
+    db_conn.query(sql, (error, result, field) => {
+      if (error) {
+        callback(false);
+        return;
+      }
+      if (result[0][targetName] === targetValue) {
+        callback(true);
+        return;
+      }
+      callback(false);
+      return;
+    });
   } catch (e) {
-    return -1;
+    callback(false);
   }
 };
 
-var randomString = function(length) {
+var randomString = (length) => {
   var character = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
   var rendom_str = '';
   var loopNum = length;
