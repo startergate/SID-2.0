@@ -24,6 +24,19 @@ body {
   border-bottom: 1px solid #3d414d;
   padding: 10px 6px;
   font-size: 15px;
+  box-sizing: border-box;
+}
+
+.sidInputError {
+  color: red;
+  font-size: 15px;
+  margin: 0;
+  font-family: Noto Sans KR;
+  font-weight: 300;
+}
+
+.sidWarningInput {
+  border-bottom: 1px solid red !important;
 }
 
 .covra{
@@ -88,6 +101,26 @@ body {
   background-color: #005da6;
   color: white;
 }
+
+.row {
+  width: 100%
+}
+
+.towardBtn {
+  text-align: right;
+}
+
+.loginForm {
+  width: 100%;
+}
+
+.padding15 {
+  height: 15px;
+}
+
+
+
+
 
 
 
