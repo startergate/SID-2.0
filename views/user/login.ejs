@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+  	<link rel="stylesheet" type="text/css" href="/stylesheets/bgStyle.css">
+  	<link rel="stylesheet" type="text/css" href="/stylesheets/login.css">
+
+    <title>Login | SID</title>
+  </head>
+  <body class='bg bge bgImg'>
+    <p class="imgLocation">Image by Unsplash</p>
+    <div id="target" class="fullScreen">
+      <div class="id_input covra">
+        <p class="SIDTITLE">STARTERGATE<strong>IDENTITY</strong></p>
+        <div id="back" class='loginBack hidden'>
+          <button id='backBtn' class='imgBtn'>
+            <img src="/frontend/beforeArrow.svg" alt="">
+          </button>
+          <div class='identity'>씨발씨발씨발</div>
+        </div>
+        <div class="padding15"></div>
+
+        <p class="loginText" style="margin-bottom: 20px">Sign in</p>
+        <form class='loginForm' action="?headTo=<%= headTo %>" method='POST'>
+          <div id='id_input'>
+            <input type="text" name='id' class='sidInput' placeholder='ID'>
+            <p class='sidInputError' id='idError'></p>
+          </div>
+          <div id='nk_input' class="hidden">
+            <input type="text" name='nk' class='sidInput' placeholder='닉네임 입력'>
+          </div>
+          <div id='pw_input' class="hidden">
+            <input type="password" name='pw' class='sidInput' placeholder='비밀번호 입력'>
+            <p class='sidInputError' id='pwError'></p>
+          </div>
+          <div class='dummy' style='margin-bottom: 15px'></div>
+          <div class='row towardBtn' style="margin-top: 20px;">
+            <button class='btn btnContinue'>계속</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="/javascripts/sid.js" charset="utf-8"></script>
+    <script type="text/javascript">
+      const sid = new SID();
+      var status = 'idEnter';
+      $('.btnContinue').click(function(event) {
+        event.preventDefault();
+        if (status == 'idEnter') {
+          var id = $('#id_input > input').val();
+          if (id != '') {
+            sid.checkID(id, function(is_exist) {
+              status = 'pwEnter';
+              $('#back').removeClass('hidden');
+              $('.identity').text(id);
+              $('#id_input').addClass('hidden');
+              $('#pw_input').removeClass('hidden');
+              if (!is_exist) {
+                status = 'registerEnter';
+                $('.loginText').text('Sign up');
+                $('#nk_input').removeClass('hidden');
+              }
+            });
+          } else {
+            $('#idError').text('ID를 입력해주세요');
+            $('#id_input > input').addClass('sidWarningInput');
+          }
+        } else if (status == 'pwEnter') {
+          if ($('#pw_input > input').val()) {
+            sid.login('<%= clientid %>', $('#id_input > input').val(), $('#pw_input > input').val(), function(userdata) {
+              if (userdata.hasOwnProperty('error')) {
+                $('#pwError').text('비밀번호가 틀렸습니다');
+                $('#pw_input > input').addClass('sidWarningInput');
+              } else {
+                location.href = '<%= headTo %>?sessid=' + userdata.sessid;
+              }
+            });
+          } else {
+            $('#pwError').text('비밀번호를 입력해주세요');
+            $('#pw_input > input').addClass('sidWarningInput');
+          }
+        } else if (status == 'registerEnter') {
+          if ($('#pw_input > input').val()) {
+            var nickname = $('#nk_input > input').val()
+            if (nickname == '') {
+              nickname = 'User';
+            }
+            sid.register('<%= clientid %>', $('#id_input > input').val(), $('#pw_input > input').val(), nickname, function(pid) {
+              sid.login('<%= clientid %>', $('#id_input > input').val(), $('#pw_input > input').val(), function(userdata) {
+                location.href = '<%= headTo %>?sessid=' + userdata.sessid + '&pid=' + userdata.sessid;
+              })
+            });
+          } else {
+            $('#pwError').text('비밀번호를 입력해주세요');
+            $('#pw_input > input').addClass('sidWarningInput');
+          }
+        }
+      });
+      $('#id_input > input').click(function(event) {
+        $('#idError').text('');
+        $('#id_input > input').removeClass('sidWarningInput');
+      });
+      $('#pw_input > input').click(function(event) {
+        $('#pwError').text('');
+        $('#pw_input > input').removeClass('sidWarningInput');
+      });
+      $('#backBtn').click(function(event) {
+        status = 'idEnter';
+        $('#back').addClass('hidden');
+        $('#id_input').removeClass('hidden');
+        $('#pw_input').addClass('hidden');
+        $('#pw_reinput').addClass('hidden');
+        $('#nk_input').addClass('hidden');
+        $('.loginText').text('Sign in');
+        $('#pwError').text('');
+        $('#pw_input > input').removeClass('sidWarningInput');
+        status = 'idEnter';
+      })
+    </script>
+  </body>
+</html>

@@ -59,7 +59,11 @@ router.post('/session', async (req, res, next) => {
         return;
       }
       if (results.length < 1) {
-        res.status(400);
+        if (res.body.isClient) {
+          res.status(200);
+        } else {
+          res.status(400);
+        }
         res.send({
           type: 'error',
 
@@ -174,7 +178,12 @@ router.post('/session', async (req, res, next) => {
           return;
         }
         if (results.length < 1) {
-          await res.status(400);
+          console.log(req.body);
+          if (req.body.isClient) {
+            res.status(200);
+          } else {
+            res.status(400);
+          }
           await res.send({
             type: 'error',
 
@@ -243,6 +252,7 @@ router.post('/user', async (req, res, next) => {
   var id = db_conn.escape(req.body.userid); // receive POST json ID
   var pw = req.body.password; // receive POST json PW
   var clientid = db_conn.escape(req.body.clientid); // receive POST json CID
+  console.log(clientid);
   var nickname = db_conn.escape(req.body.nickname); // receive POST json CID
   if (nickname == '') {
     nickname = id;
@@ -262,6 +272,7 @@ router.post('/user', async (req, res, next) => {
       return;
     }
     if (results.length < 1) {
+      console.log('X');
       await res.status(400);
       await res.send({
         type: 'error',
@@ -779,13 +790,12 @@ router.put('/:data', (req, res, next) => {
 var checkExist = (targetDB, targetName, targetValue, callback) => {
   try {
     var sql = "SELECT * FROM " + targetDB + " WHERE " + targetName + " = '" + targetValue + "'";
-    console.log(sql);
     db_conn.query(sql, (error, result, field) => {
       if (error) {
         callback(false);
         return;
       }
-      if (result.length > 1) {
+      if (result.length > 0) {
         callback(true);
         return;
       }
