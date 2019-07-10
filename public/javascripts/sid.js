@@ -16,10 +16,10 @@ class SID {
 
   checkID(id, callback) {
     $.ajax({
-      url: `http://sid.donote.co:3000/api/v1/id/${id}/exist/bool`,
+      url: 'http://localhost:3000/api/v1/id/' + id + '/exist/bool',
       type: 'GET',
       dataType: 'json',
-      success: (data) => {
+      success: function(data) {
         callback(data.is_exist);
       }
     });
@@ -68,6 +68,64 @@ class SID {
       },
       success: (data) => {
         localStorage.sid_clientid = data.response_data;
+      }
+    });
+  }
+
+  login(clientid, id, pw, callback) {
+    console.log({
+      'type': 'login',
+      'clientid': clientid,
+      'userid': id,
+      'password': pw,
+      'isPermanent': false,
+      'isWeb': true,
+      'isClient': true
+    });
+    $.ajax({
+      url: 'http://localhost:3000/api/v1/session/',
+      type: 'POST',
+      dataType: 'json',
+      data: {
+        'type': 'login',
+        'clientid': clientid,
+        'userid': id,
+        'password': pw,
+        'isPermanent': false,
+        'isWeb': true,
+        'isClient': true
+      },
+      success: (data) => {
+        var output = {};
+        if (data.type == 'error') {
+          callback({
+            error: 1
+          });
+          return
+        }
+        output.sessid = data.response_data[0];
+        output.pid = data.response_data[1];
+        output.nickname = data.response_data[2];
+        output.expire = data.response_data[3];
+        callback(output);
+      }
+    }).fail();
+  }
+
+  register(clientid, id, pw, nickname, callback) {
+    $.ajax({
+      url: 'http://localhost:3000/api/v1/user/',
+      type: 'POST',
+      dataType: 'json',
+      data: {
+        'type': 'register',
+        'clientid': clientid,
+        'userid': id,
+        'nickname': nickname,
+        'password': pw
+      },
+      success: (data) => {
+        callback(data.private_id);
       }
     });
   }

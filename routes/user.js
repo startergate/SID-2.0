@@ -14,7 +14,7 @@ router.get('/info', (req, res, next) => {
     res.render('user/login.ejs');
     return;
   }
-  res.render('user/info.ejs', {
+  res.render('user/info', {
     'nickname': req.session.sidNickname,
     'id': req.session.sidUser,
     'password': req.session.sidPassword
@@ -26,10 +26,9 @@ router.get('/login', (req, res, next) => {
     res.redirect('/user/info');
     return;
   }
-  res.render('user/login.ejs', {
-    'nickname': req.session.sidNickname,
-    'id': req.session.sidUser,
-    'password': req.session.sidPassword
+  res.render('user/login', {
+    'clientid': req.query.clientid,
+    'headTo': req.query.headTo
   });
 });
 
