@@ -16,7 +16,7 @@ class SID {
 
   checkID(id, callback) {
     $.ajax({
-      url: 'http://localhost:3000/api/v1/id/' + id + '/exist/bool',
+      url: 'http://sid.donote.co:3000/api/v1/id/' + id + '/exist/bool',
       type: 'GET',
       dataType: 'json',
       success: function(data) {
@@ -83,7 +83,7 @@ class SID {
       'isClient': true
     });
     $.ajax({
-      url: 'http://localhost:3000/api/v1/session/',
+      url: 'http://sid.donote.co:3000/api/v1/session/',
       type: 'POST',
       dataType: 'json',
       data: {
@@ -114,7 +114,7 @@ class SID {
 
   register(clientid, id, pw, nickname, callback) {
     $.ajax({
-      url: 'http://localhost:3000/api/v1/user/',
+      url: 'http://sid.donote.co:3000/api/v1/user/',
       type: 'POST',
       dataType: 'json',
       data: {
