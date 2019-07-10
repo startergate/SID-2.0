@@ -73,7 +73,7 @@
                 $('#pwError').text('비밀번호가 틀렸습니다');
                 $('#pw_input > input').addClass('sidWarningInput');
               } else {
-                location.href = '<%= headTo %>?sessid=' + userdata.sessid;
+                location.href = '<%= headTo %>?sessid=' + userdata.sessid + '&pid=' + userdata.pid;
               }
             });
           } else {
@@ -88,7 +88,7 @@
             }
             sid.register('<%= clientid %>', $('#id_input > input').val(), $('#pw_input > input').val(), nickname, function(pid) {
               sid.login('<%= clientid %>', $('#id_input > input').val(), $('#pw_input > input').val(), function(userdata) {
-                location.href = '<%= headTo %>?sessid=' + userdata.sessid + '&pid=' + userdata.sessid;
+                location.href = '<%= headTo %>?sessid=' + userdata.sessid + '&pid=' + userdata.pid;
               })
             });
           } else {
