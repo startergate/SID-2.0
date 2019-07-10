@@ -51,7 +51,9 @@ body {
 
 .btn {
   border: 0;
-  padding: 10px;
+  padding: 4px 12px;
+  font-size: 15px;
+  width:108px;
 }
 
 .imgBtn {
@@ -82,6 +84,10 @@ body {
   display: inline-block;
 }
 
+.btnContinue {
+  background-color: #005da6;
+  color: white;
+}
 
 
 
