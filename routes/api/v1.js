@@ -782,11 +782,10 @@ var checkExist = (targetDB, targetName, targetValue, callback) => {
     console.log(sql);
     db_conn.query(sql, (error, result, field) => {
       if (error) {
-        console.log(error);
         callback(false);
         return;
       }
-      if (result.length < 1) {
+      if (result.length > 1) {
         callback(true);
         return;
       }
