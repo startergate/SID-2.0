@@ -379,7 +379,6 @@ router.get('/:clientid/:sessid/:data', (req, res, next) => {
   clientid = db_conn.escape(req.params.clientid);
   db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
     if (error) {
-      console.log(error);
       res.status(500);
       // 정상 작동 여부 전송
       res.send({

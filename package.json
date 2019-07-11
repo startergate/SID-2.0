@@ -6,7 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "@startergate/sidjs": "0.0.1",
+    "@startergate/sidjs": "0.0.4",
     "async": "^2.6.2",
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.4",
