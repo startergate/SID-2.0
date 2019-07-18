@@ -6,7 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "@startergate/sidjs": "0.0.4",
+    "@startergate/sidjs": "0.0.6",
     "async": "^2.6.2",
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.4",
@@ -22,5 +22,9 @@
     "mysql2": "^1.6.5",
     "passport": "^0.4.0",
     "path": "^0.12.7"
-  }
+  },
+  "main": "index.js",
+  "repository": "https://github.com/startergate/SID-2.0.git",
+  "author": "STARTERGATE <32726809+startergate@users.noreply.github.com>",
+  "license": "MIT"
 }
