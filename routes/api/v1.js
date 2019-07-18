@@ -672,8 +672,8 @@ router.put('/:data', (req, res, next) => {
     return;
   }
 
-  sessid = db_conn.escape(req.body.sessid);
-  clientid = db_conn.escape(req.body.clientid);
+  let sessid = db_conn.escape(req.body.sessid);
+  let clientid = db_conn.escape(req.body.clientid);
   db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
     if (error) {
       console.log(error);
@@ -698,7 +698,7 @@ router.put('/:data', (req, res, next) => {
       });
       return;
     }
-    value = req.body.value;
+    let value = req.body.value;
     switch (req.body.data) {
       case 'id':
         value = sha256(req.body.value);
@@ -786,9 +786,14 @@ router.put('/:data', (req, res, next) => {
   // password, nickname
 });
 
-var checkExist = (targetDB, targetName, targetValue, callback) => {
+const checkExist = (targetDB, targetName, targetValue, callback) => {
+  console.log(targetDB);
+  targetDB = db_conn.escape(targetDB).split("'").join('');
+  targetName = db_conn.escape(targetName).split("'").join('');
+  targetValue = db_conn.escape(targetValue);
   try {
-    var sql = "SELECT * FROM " + targetDB + " WHERE " + targetName + " = '" + targetValue + "'";
+    const sql = "SELECT * FROM " + targetDB + " WHERE " + targetName + " = " + targetValue;
+    console.log(sql);
     db_conn.query(sql, (error, result, field) => {
       if (error) {
         callback(false);
@@ -799,17 +804,16 @@ var checkExist = (targetDB, targetName, targetValue, callback) => {
         return;
       }
       callback(false);
-      return;
     });
   } catch (e) {
     callback(false);
   }
 };
 
-var randomString = (length) => {
-  var character = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  var rendom_str = '';
-  var loopNum = length;
+const randomString = (length) => {
+  const character = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let rendom_str = '';
+  let loopNum = length;
   while (loopNum) {
     rendom_str += character[Math.floor(Math.random() * character.length)];
     loopNum -= 1;
@@ -818,22 +822,23 @@ var randomString = (length) => {
   return rendom_str;
 };
 
-var jsonChecker = (_json, variablesArray, isMustFilled) => {
+const jsonChecker = (_json, variablesArray, isMustFilled) => {
   if (!Array.isArray(variablesArray) || !Array.isArray(isMustFilled)) {
     throw new TypeError('Input Data is not an array');
   }
   if (typeof _json !== 'object') {
     throw new TypeError('Input Data is not an object');
   }
-  var cnt = 0;
-  for (var data in _json) {
+  let cnt = 0;
+  for (let data in _json) {
+    if (!variablesArray.hasOwnProperty(data)) continue;
     if (variablesArray.indexOf(data) === -1) continue;
     if (!(_json[data] || !isMustFilled[cnt])) return 0;
 
     cnt++;
   }
   if (cnt !== variablesArray.length) return 0;
-  for (var variable in variablesArray) {
+  for (let variable in variablesArray) {
     if (!Object.prototype.hasOwnProperty.call(_json, variablesArray[variable])) return 0;
   }
   return 1;
