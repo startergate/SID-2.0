@@ -1,18 +1,15 @@
 /*jshint esversion: 9 */
-// legacy support
 
 const express = require('express');
-const bodyparser = require('body-parser');
 const mysql = require('mysql');
-const passport = require('passport');
+// const passport = require('passport');
 const md5 = require('md5');
 const sha256 = require('js-sha256').sha256;
-//const async = require('async');
+const controller = require('./v1.controller');
+
 const router = express.Router();
 
-const v1Router = require('./api/v1');
-
-var db_conn = mysql.createConnection({
+const db_conn = mysql.createConnection({
   //host: 'db.donote.co',
   host: '54.180.27.126',
   user: 'root',
@@ -22,15 +19,12 @@ var db_conn = mysql.createConnection({
 
 db_conn.connect();
 
-router.use('/v1', v1Router)
-
 router.all('/', (req, res, next) => {
   var output = {
     type: 'error',
 
     is_vaild: false,
-    description: 'Request to ROOT directory of api is prohibited',
-    warning: 'Update Your SID Client'
+    description: 'Request to ROOT directory of api is prohibited'
   };
   res.status(400);
   res.send(output);
@@ -45,8 +39,7 @@ router.post('/session', async (req, res, next) => {
         type: 'error',
 
         is_vaild: false,
-        error: 'Missing Arguments. Require Client ID, Session ID',
-        warning: 'Update Your SID Client'
+        error: 'Missing Arguments. Require Client ID, Session ID'
       });
       return;
     }
@@ -61,19 +54,21 @@ router.post('/session', async (req, res, next) => {
           type: 'error',
 
           is_vaild: true,
-          is_succeed: false,
-          warning: 'Update Your SID Client'
+          is_succeed: false
         });
         return;
       }
       if (results.length < 1) {
-        res.status(400);
+        if (res.body.isClient) {
+          res.status(200);
+        } else {
+          res.status(400);
+        }
         res.send({
           type: 'error',
 
           is_vaild: false,
-          error: 'Error with Session ID or Client ID',
-          warning: 'Update Your SID Client'
+          error: 'Error with Session ID or Client ID'
         });
         return;
       }
@@ -86,8 +81,7 @@ router.post('/session', async (req, res, next) => {
             type: 'error',
 
             is_vaild: true,
-            is_succeed: false,
-            warning: 'Update Your SID Client'
+            is_succeed: false
           });
           return;
         }
@@ -97,8 +91,7 @@ router.post('/session', async (req, res, next) => {
             type: 'error',
 
             is_vaild: false,
-            error: 'Error with User Information',
-            warning: 'Update Your SID Client'
+            error: 'Error with User Information'
           });
           return;
         }
@@ -129,8 +122,7 @@ router.post('/session', async (req, res, next) => {
             results[0].pid, // 바깥 쪽에서 가져옴
             result[0].nickname,
             expireData
-          ],
-          warning: 'Update Your SID Client'
+          ]
         });
       });
     });
@@ -140,20 +132,17 @@ router.post('/session', async (req, res, next) => {
       type: 'error',
 
       is_vaild: false,
-      error: 'Missing Arguments. Require Client ID, User ID, Password',
-      warning: 'Update Your SID Client'
+      error: 'Missing Arguments. Require Client ID, User ID, Password'
     });
     return;
   } else {
     var id = db_conn.escape(req.body.userid); // receive POST json ID
-    var pw = req.body.password; // receive POST json PW
     let clientid = db_conn.escape(req.body.clientid); // receive POST json CID
     await db_conn.query('SELECT client_data FROM client_list WHERE (clientid LIKE ' + clientid + ')', async (error, results, fields) => {
       if (error) {
         console.log(error);
         res.status(500);
         // 정상 작동 여부 전송
-        res.send({
           type: 'error',
 
           is_vaild: true,
@@ -167,8 +156,7 @@ router.post('/session', async (req, res, next) => {
           type: 'error',
 
           is_vaild: false,
-          error: 'Error with Client ID',
-          warning: 'Update Your SID Client'
+          error: 'Error with Client ID'
         });
         return;
       }
@@ -183,19 +171,22 @@ router.post('/session', async (req, res, next) => {
             type: 'error',
 
             is_vaild: true,
-            is_succeed: false,
-            warning: 'Update Your SID Client'
+            is_succeed: false
           });
           return;
         }
         if (results.length < 1) {
-          await res.status(400);
+          console.log(req.body);
+          if (req.body.isClient) {
+            res.status(200);
+          } else {
+            res.status(400);
+          }
           await res.send({
             type: 'error',
 
             is_vaild: false,
-            error: 'Error with User Information',
-            warning: 'Update Your SID Client'
+            error: 'Error with User Information'
           });
           return;
         }
@@ -236,8 +227,7 @@ router.post('/session', async (req, res, next) => {
             results[0].pid,
             results[0].nickname,
             expireData
-          ],
-          warning: 'Update Your SID Client'
+          ]
         });
       });
     });
@@ -252,8 +242,7 @@ router.post('/user', async (req, res, next) => {
       type: 'error',
 
       is_vaild: false,
-      error: 'Missing Arguments. Require Client ID, User ID, Password',
-      warning: 'Update Your SID Client'
+      error: 'Missing Arguments. Require Client ID, User ID, Password'
     });
     return;
   }
@@ -261,6 +250,7 @@ router.post('/user', async (req, res, next) => {
   var id = db_conn.escape(req.body.userid); // receive POST json ID
   var pw = req.body.password; // receive POST json PW
   var clientid = db_conn.escape(req.body.clientid); // receive POST json CID
+  console.log(clientid);
   var nickname = db_conn.escape(req.body.nickname); // receive POST json CID
   if (nickname == '') {
     nickname = id;
@@ -275,19 +265,18 @@ router.post('/user', async (req, res, next) => {
         type: 'error',
 
         is_vaild: true,
-        is_succeed: false,
-        warning: 'Update Your SID Client'
+        is_succeed: false
       });
       return;
     }
     if (results.length < 1) {
+      console.log('X');
       await res.status(400);
       await res.send({
         type: 'error',
 
         is_vaild: false,
-        error: 'Error with Client ID',
-        warning: 'Update Your SID Client'
+        error: 'Error with Client ID'
       });
       return;
     }
@@ -302,8 +291,7 @@ router.post('/user', async (req, res, next) => {
           type: 'response',
 
           is_vaild: true,
-          is_succeed: false,
-          warning: 'Update Your SID Client'
+          is_succeed: false
         });
         return;
       }
@@ -315,8 +303,7 @@ router.post('/user', async (req, res, next) => {
 
         is_vaild: true,
         is_succeed: true,
-        private_id: pid,
-        warning: 'Update Your SID Client'
+        private_id: pid
       });
     });
   });
@@ -330,8 +317,7 @@ router.delete('/session', (req, res, next) => {
       type: 'error',
 
       is_vaild: false,
-      error: 'Missing Arguments. Require Client ID, Session ID',
-      warning: 'Update Your SID Client'
+      error: 'Missing Arguments. Require Client ID, Session ID'
     });
     return;
   }
@@ -347,8 +333,7 @@ router.delete('/session', (req, res, next) => {
         type: 'error',
 
         is_vaild: true,
-        is_succeed: false,
-        warning: 'Update Your SID Client'
+        is_succeed: false
       });
       return;
     }
@@ -358,8 +343,7 @@ router.delete('/session', (req, res, next) => {
         type: 'error',
 
         is_vaild: false,
-        error: 'Error with Session ID or Client ID',
-        warning: 'Update Your SID Client'
+        error: 'Error with Session ID or Client ID'
       });
       return;
     }
@@ -367,13 +351,10 @@ router.delete('/session', (req, res, next) => {
       if (error) {
         console.log(error);
         res.status(500);
-        // 정상 작동 여부 전송
-        res.send({
           type: 'error',
 
           is_vaild: true,
-          is_succeed: false,
-          warning: 'Update Your SID Client'
+          is_succeed: false
         });
         return;
       }
@@ -382,28 +363,25 @@ router.delete('/session', (req, res, next) => {
         type: 'response',
 
         is_vaild: true,
-        is_succeed: true,
-        warning: 'Update Your SID Client'
+        is_succeed: true
       });
     });
   });
 });
 
 /* info modifier. */
-router.get('/:clientid/:sessid/:data', function(req, res, next) {
+router.get('/:clientid/:sessid/:data', (req, res, next) => {
   sessid = db_conn.escape(req.params.sessid);
   clientid = db_conn.escape(req.params.clientid);
   db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
     if (error) {
-      console.log(error);
       res.status(500);
       // 정상 작동 여부 전송
       res.send({
         type: 'error',
 
         is_vaild: true,
-        is_succeed: false,
-        warning: 'Update Your SID Client'
+        is_succeed: false
       });
       return;
     }
@@ -413,8 +391,7 @@ router.get('/:clientid/:sessid/:data', function(req, res, next) {
         type: 'error',
 
         is_vaild: false,
-        error: 'Error with Session ID or Client ID',
-        warning: 'Update Your SID Client'
+        error: 'Error with Session ID or Client ID'
       });
       return;
     }
@@ -429,8 +406,7 @@ router.get('/:clientid/:sessid/:data', function(req, res, next) {
               type: 'error',
 
               is_vaild: true,
-              is_succeed: false,
-              warning: 'Update Your SID Client'
+              is_succeed: false
             });
             return;
           }
@@ -438,10 +414,10 @@ router.get('/:clientid/:sessid/:data', function(req, res, next) {
           res.send({
             type: 'response',
 
+
             is_vaild: true,
             requested_data: 'usname',
-            response_data: results[0].id,
-            warning: 'Update Your SID Client'
+            response_data: results[0].id
           });
         });
         break;
@@ -455,8 +431,7 @@ router.get('/:clientid/:sessid/:data', function(req, res, next) {
               type: 'response',
 
               is_vaild: true,
-              is_succeed: false,
-              warning: 'Update Your SID Client'
+              is_succeed: false
             });
             return;
           }
@@ -465,29 +440,9 @@ router.get('/:clientid/:sessid/:data', function(req, res, next) {
             type: 'response',
 
             is_vaild: true,
-            requested_data: 'pfimg',
-            response_data: results[0].profile_img,
-            warning: 'Update Your SID Client'
-          });
-        });
-        break;
-      default:
-        res.status(400);
-        res.send({
-          type: 'error',
+router.get('/:clientid/:sessid/:data', controller.getUserInfo);
 
-          is_vaild: false,
-          error: 'Invaild Requested Data Type',
-          warning: 'Update Your SID Client'
-        });
-        return;
-    }
-  });
-
-  // username, profile img
-});
-
-router.post('/:data/', function(req, res, next) {
+router.post('/:data/', (req, res, next) => {
   // POST DATA 무결성 검증
   if (!(req.body.data === req.params.data && jsonChecker(req.body, ['data'], [true]))) {
     res.status(400);
@@ -495,8 +450,7 @@ router.post('/:data/', function(req, res, next) {
       type: 'error',
 
       is_vaild: false,
-      error: 'Missing Arguments. Require Requested Data Type',
-      warning: 'Update Your SID Client'
+      error: 'Missing Arguments. Require Requested Data Type'
     });
     return;
   }
@@ -508,8 +462,7 @@ router.post('/:data/', function(req, res, next) {
           type: 'error',
 
           is_vaild: false,
-          error: 'Missing Arguments. Require Requested Data Type',
-          warning: 'Update Your SID Client'
+          error: 'Missing Arguments. Require Requested Data Type'
         });
         return;
       }
@@ -524,8 +477,7 @@ router.post('/:data/', function(req, res, next) {
             type: 'error',
 
             is_vaild: true,
-            is_succeed: false,
-            warning: 'Update Your SID Client'
+            is_succeed: false
           });
           return;
         }
@@ -539,8 +491,7 @@ router.post('/:data/', function(req, res, next) {
           is_succeed: true,
 
           requested_data: 'clientid',
-          response_data: clientid,
-          warning: 'Update Your SID Client'
+          response_data: clientid
         });
       });
       break;
@@ -550,14 +501,13 @@ router.post('/:data/', function(req, res, next) {
         type: 'error',
 
         is_vaild: false,
-        error: 'Invaild Requested Data Type',
-        warning: 'Update Your SID Client'
+        error: 'Invaild Requested Data Type'
       });
       return;
   }
 });
 
-router.post('/:data/verify', function(req, res, next) {
+router.post('/:data/verify', (req, res, next) => {
   // POST DATA 무결성 검증
   if (!(req.body.data === req.params.data && jsonChecker(req.body, ['data', 'clientid', 'sessid'], [true, true, true]))) {
     res.status(400);
@@ -565,8 +515,7 @@ router.post('/:data/verify', function(req, res, next) {
       type: 'error',
 
       is_vaild: false,
-      error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID',
-      warning: 'Update Your SID Client'
+      error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID'
     });
     return;
   }
@@ -582,8 +531,7 @@ router.post('/:data/verify', function(req, res, next) {
         type: 'error',
 
         is_vaild: true,
-        is_succeed: false,
-        warning: 'Update Your SID Client'
+        is_succeed: false
       });
       return;
     }
@@ -593,16 +541,14 @@ router.post('/:data/verify', function(req, res, next) {
         res.send({
           type: 'response',
 
-          is_vaild: false,
-          warning: 'Update Your SID Client'
+          is_vaild: false
         });
       } else {
         res.status(200);
         res.send({
           type: 'response',
 
-          is_vaild: true,
-          warning: 'Update Your SID Client'
+          is_vaild: true
         });
       }
       return;
@@ -613,8 +559,7 @@ router.post('/:data/verify', function(req, res, next) {
         type: 'error',
 
         is_vaild: false,
-        error: 'Invaild Session ID or Client ID',
-        warning: 'Update Your SID Client'
+        error: 'Invaild Session ID or Client ID'
       });
       return;
     }
@@ -626,8 +571,7 @@ router.post('/:data/verify', function(req, res, next) {
             type: 'error',
 
             is_vaild: false,
-            error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID, Value',
-            warning: 'Update Your SID Client'
+            error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID, Value'
           });
           return;
         }
@@ -640,8 +584,7 @@ router.post('/:data/verify', function(req, res, next) {
               type: 'response',
 
               is_vaild: true,
-              is_succeed: false,
-              warning: 'Update Your SID Client'
+              is_succeed: false
             });
             return;
           }
@@ -650,16 +593,14 @@ router.post('/:data/verify', function(req, res, next) {
             res.send({
               type: 'response',
 
-              is_vaild: true,
-              warning: 'Update Your SID Client'
+              is_vaild: true
             });
           } else {
             res.status(200);
             res.send({
               type: 'response',
 
-              is_vaild: false,
-              warning: 'Update Your SID Client'
+              is_vaild: false
             });
           }
         });
@@ -671,8 +612,7 @@ router.post('/:data/verify', function(req, res, next) {
           type: 'error',
 
           is_vaild: false,
-          error: 'Invaild Requested Data Type',
-          warning: 'Update Your SID Client'
+          error: 'Invaild Requested Data Type'
         });
         return;
     }
@@ -680,8 +620,24 @@ router.post('/:data/verify', function(req, res, next) {
   // password, sessid
 });
 
+router.get('/:type/:data/exist/bool', async (req, res, next) => {
+  switch (req.params.type) {
+    case 'id':
+      checkExist('userdata', req.params.type, req.params.data, (is_exist) => {
+        res.send({
+          type: 'response',
+
+          is_exist: is_exist
+        });
+      });
+      return;
+    default:
+      return;
+  }
+});
+
 // modify
-router.put('/:data', function(req, res, next) {
+router.put('/:data', (req, res, next) => {
   // POST DATA 무결성 검증
   if (!(req.body.type === 'modify' && jsonChecker(req.body, ['data', 'clientid', 'sessid', 'value'], [true, true, true, true]))) {
     res.status(400);
@@ -689,14 +645,13 @@ router.put('/:data', function(req, res, next) {
       type: 'error',
 
       is_vaild: false,
-      error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID, Value',
-      warning: 'Update Your SID Client'
+      error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID, Value'
     });
     return;
   }
 
-  sessid = db_conn.escape(req.body.sessid);
-  clientid = db_conn.escape(req.body.clientid);
+  let sessid = db_conn.escape(req.body.sessid);
+  let clientid = db_conn.escape(req.body.clientid);
   db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
     if (error) {
       console.log(error);
@@ -706,8 +661,7 @@ router.put('/:data', function(req, res, next) {
         type: 'error',
 
         is_vaild: true,
-        is_succeed: false,
-        warning: 'Update Your SID Client'
+        is_succeed: false
       });
       return;
     }
@@ -718,12 +672,11 @@ router.put('/:data', function(req, res, next) {
         type: 'error',
 
         is_vaild: false,
-        error: 'Invaild Session ID or Client ID',
-        warning: 'Update Your SID Client'
+        error: 'Invaild Session ID or Client ID'
       });
       return;
     }
-    value = req.body.value;
+    let value = req.body.value;
     switch (req.body.data) {
       case 'id':
         value = sha256(req.body.value);
@@ -736,8 +689,7 @@ router.put('/:data', function(req, res, next) {
               type: 'response',
 
               is_vaild: true,
-              is_succeed: false,
-              warning: 'Update Your SID Client'
+              is_succeed: false
             });
             return;
           }
@@ -746,8 +698,7 @@ router.put('/:data', function(req, res, next) {
             type: 'response',
 
             is_vaild: true,
-            is_processed: true,
-            warning: 'Update Your SID Client'
+            is_processed: true
           });
         });
         break;
@@ -762,8 +713,7 @@ router.put('/:data', function(req, res, next) {
               type: 'response',
 
               is_vaild: true,
-              is_succeed: false,
-              warning: 'Update Your SID Client'
+              is_succeed: false
             });
             return;
           }
@@ -772,8 +722,7 @@ router.put('/:data', function(req, res, next) {
             type: 'response',
 
             is_vaild: true,
-            is_processed: true,
-            warning: 'Update Your SID Client'
+            is_processed: true
           });
         });
         break;
@@ -787,8 +736,7 @@ router.put('/:data', function(req, res, next) {
               type: 'response',
 
               is_vaild: true,
-              is_succeed: false,
-              warning: 'Update Your SID Client'
+              is_succeed: false
             });
             return;
           }
@@ -797,8 +745,7 @@ router.put('/:data', function(req, res, next) {
             type: 'response',
 
             is_vaild: true,
-            is_processed: true,
-            warning: 'Update Your SID Client'
+            is_processed: true
           });
         });
         break;
@@ -809,8 +756,7 @@ router.put('/:data', function(req, res, next) {
           type: 'error',
 
           is_vaild: false,
-          error: 'Invaild Requested Data Type',
-          warning: 'Update Your SID Client'
+          error: 'Invaild Requested Data Type'
         });
         return;
     }
@@ -818,24 +764,34 @@ router.put('/:data', function(req, res, next) {
   // password, nickname
 });
 
-var checkExist = function(targetDB, targetName, targetValue, valueType = 'string') {
+const checkExist = (targetDB, targetName, targetValue, callback) => {
+  console.log(targetDB);
+  targetDB = db_conn.escape(targetDB).split("'").join('');
+  targetName = db_conn.escape(targetName).split("'").join('');
+  targetValue = db_conn.escape(targetValue);
   try {
-    connection.connect();
-    var sql;
-    if (valueType === 'string') {
-      sql = "SELECT * FROM " + targetDB + " WHERE " + targetName + " = '" + targetValue + "'";
-    } else {
-      sql = "SELECT * FROM " + targetDB + " WHERE " + targetName + " = " + targetValue;
-    }
+    const sql = "SELECT * FROM " + targetDB + " WHERE " + targetName + " = " + targetValue;
+    console.log(sql);
+    db_conn.query(sql, (error, result, field) => {
+      if (error) {
+        callback(false);
+        return;
+      }
+      if (result.length > 0) {
+        callback(true);
+        return;
+      }
+      callback(false);
+    });
   } catch (e) {
-    return -1;
+    callback(false);
   }
 };
 
-var randomString = function(length) {
-  var character = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  var rendom_str = '';
-  var loopNum = length;
+const randomString = (length) => {
+  const character = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let rendom_str = '';
+  let loopNum = length;
   while (loopNum) {
     rendom_str += character[Math.floor(Math.random() * character.length)];
     loopNum -= 1;
@@ -844,22 +800,23 @@ var randomString = function(length) {
   return rendom_str;
 };
 
-var jsonChecker = (_json, variablesArray, isMustFilled) => {
+const jsonChecker = (_json, variablesArray, isMustFilled) => {
   if (!Array.isArray(variablesArray) || !Array.isArray(isMustFilled)) {
     throw new TypeError('Input Data is not an array');
   }
   if (typeof _json !== 'object') {
     throw new TypeError('Input Data is not an object');
   }
-  var cnt = 0;
-  for (var data in _json) {
+  let cnt = 0;
+  for (let data in _json) {
+    if (!variablesArray.hasOwnProperty(data)) continue;
     if (variablesArray.indexOf(data) === -1) continue;
     if (!(_json[data] || !isMustFilled[cnt])) return 0;
 
     cnt++;
   }
   if (cnt !== variablesArray.length) return 0;
-  for (var variable in variablesArray) {
+  for (let variable in variablesArray) {
     if (!Object.prototype.hasOwnProperty.call(_json, variablesArray[variable])) return 0;
   }
   return 1;
