@@ -43,9 +43,9 @@ exports.jsonChecker = (_json, variablesArray, isMustFilled) => {
     }
     let cnt = 0;
     for (let data in _json) {
-        if (!variablesArray.hasOwnProperty(data)) continue;
-        if (variablesArray.indexOf(data) === -1) continue;
-        if (!(_json[data] || !isMustFilled[cnt])) return 0;
+        let targetIndex = variablesArray.indexOf(data);
+        if (targetIndex === -1) continue;
+        if (!(_json[data] || !isMustFilled[targetIndex])) return 0;
 
         cnt++;
     }

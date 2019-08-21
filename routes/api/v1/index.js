@@ -6,8 +6,6 @@ const controller = require('./v1.controller');
 
 const router = express.Router();
 
-router.all('*', controller.rootRequest);
-
 /* login related functions. */
 router.post('/session', controller.createSession);
 
@@ -27,4 +25,5 @@ router.get('/:type/:data/exist/bool', controller.checkExistData);
 // modify
 router.put('/:data', controller.modifyUserData);
 
+router.all('*', controller.rootRequest);
 module.exports = router;

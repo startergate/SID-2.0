@@ -536,8 +536,8 @@ exports.verifyUserInfo = (req, res, next) => {
         return;
     }
 
-    sessid = db_conn.escape(req.body.sessid);
-    clientid = db_conn.escape(req.body.clientid);
+    let sessid = db_conn.escape(req.body.sessid);
+    let clientid = db_conn.escape(req.body.clientid);
     db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
         if (error) {
             console.log(error);
