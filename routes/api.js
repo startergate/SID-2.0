@@ -10,6 +10,8 @@ const sha256 = require('js-sha256').sha256;
 //const async = require('async');
 const router = express.Router();
 
+const v1Router = require('./api/v1');
+
 var db_conn = mysql.createConnection({
   //host: 'db.donote.co',
   host: '54.180.27.126',
@@ -19,6 +21,8 @@ var db_conn = mysql.createConnection({
 });
 
 db_conn.connect();
+
+router.use('/v1', v1Router)
 
 router.all('/', (req, res, next) => {
   var output = {
