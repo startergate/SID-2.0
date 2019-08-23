@@ -23,8 +23,16 @@
     "passport": "^0.4.0",
     "path": "^0.12.7"
   },
+  "devDependencies": {
+    "semistandard": "*"
+  },
   "main": "index.js",
   "repository": "https://github.com/startergate/SID-2.0.git",
   "author": "STARTERGATE <32726809+startergate@users.noreply.github.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "semistandard": {
+    "ignore": [
+      "sid.js"
+    ]
+  }
 }

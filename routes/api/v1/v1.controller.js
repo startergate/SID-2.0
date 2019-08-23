@@ -5,8 +5,8 @@ const sha256 = require('js-sha256').sha256;
 
 const sidUniversal = require('../../../modules/sidUniversal');
 
-const db_conn = mysql.createConnection({
-  //host: 'db.donote.co',
+const db_conn = mysql.createConnection({ // eslint-disable-line
+  // host: 'db.donote.co',
   host: '54.180.27.126',
   user: 'root',
   password: 'Wb4H9nn542',
@@ -16,14 +16,13 @@ const db_conn = mysql.createConnection({
 db_conn.connect();
 
 exports.rootRequest = (req, res, next) => {
-  let output = {
+  res.status(400);
+  res.send({
     type: 'error',
 
     is_vaild: false,
     description: 'Prohibited Route'
-  };
-  res.status(400);
-  res.send(output);
+  });
 };
 
 exports.createSession = async (req, res, next) => {
@@ -38,8 +37,8 @@ exports.createSession = async (req, res, next) => {
       });
       return;
     }
-    let clientid = db_conn.escape(req.body.clientid); // receive POST json CID
-    let sessid = db_conn.escape(req.body.sessid);
+    const clientid = db_conn.escape(req.body.clientid); // receive POST json CID
+    const sessid = db_conn.escape(req.body.sessid);
     db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
       if (error) {
         console.log(error);
@@ -113,7 +112,7 @@ exports.createSession = async (req, res, next) => {
             'expire'
           ],
           response_data: [
-            sessid.split("'").join(""),
+            sessid.split("'").join(''),
             results[0].pid, // 바깥 쪽에서 가져옴
             result[0].nickname,
             expireData
@@ -129,11 +128,10 @@ exports.createSession = async (req, res, next) => {
       is_vaild: false,
       error: 'Missing Arguments. Require Client ID, User ID, Password'
     });
-    return;
   } else {
     var id = db_conn.escape(req.body.userid); // receive POST json ID
     var pw = req.body.password; // receive POST json PW
-    let clientid = db_conn.escape(req.body.clientid); // receive POST json CID
+    const clientid = db_conn.escape(req.body.clientid); // receive POST json CID
     await db_conn.query('SELECT client_data FROM client_list WHERE (clientid LIKE ' + clientid + ')', async (error, results, fields) => {
       if (error) {
         console.log(error);
@@ -198,7 +196,7 @@ exports.createSession = async (req, res, next) => {
           }
         }
         expireData = expireData.toISOString().slice(0, 19).replace('T', ' ');
-        sessid = sidUniversal.randomString(64);
+        const sessid = sidUniversal.randomString(64);
 
         db_conn.query('INSERT INTO session_list (sessid, pid, clientid, expire) VALUES (\'' + sessid + '\', \'' + results[0].pid + '\', ' + clientid + ', \'' + expireData + '\')', (error, results, fields) => {
           if (error) console.log(error);
@@ -249,7 +247,7 @@ exports.createUser = async (req, res, next) => {
   var clientid = db_conn.escape(req.body.clientid); // receive POST json CID
   console.log(clientid);
   var nickname = db_conn.escape(req.body.nickname); // receive POST json CID
-  if (nickname == '') {
+  if (nickname === '') {
     nickname = id;
   }
 
@@ -319,8 +317,8 @@ exports.deleteSession = (req, res, next) => {
     return;
   }
 
-  sessid = db_conn.escape(req.body.sessid);
-  clientid = db_conn.escape(req.body.clientid);
+  const sessid = db_conn.escape(req.body.sessid);
+  const clientid = db_conn.escape(req.body.clientid);
   db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
     if (error) {
       console.log(error);
@@ -369,8 +367,8 @@ exports.deleteSession = (req, res, next) => {
 };
 
 exports.getUserInfo = (req, res, next) => {
-  sessid = db_conn.escape(req.params.sessid);
-  clientid = db_conn.escape(req.params.clientid);
+  const sessid = db_conn.escape(req.params.sessid);
+  const clientid = db_conn.escape(req.params.clientid);
   db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
     if (error) {
       res.status(500);
@@ -412,7 +410,6 @@ exports.getUserInfo = (req, res, next) => {
           res.send({
             type: 'response',
 
-
             is_vaild: true,
             requested_data: 'usname',
             response_data: results[0].id
@@ -451,7 +448,6 @@ exports.getUserInfo = (req, res, next) => {
           is_vaild: false,
           error: 'Invaild Requested Data Type'
         });
-        return;
     }
   });
 
@@ -471,7 +467,7 @@ exports.createUserInfo = (req, res, next) => {
     return;
   }
   switch (req.params.data) {
-    case 'clientid':
+    case 'clientid': {
       if (!sidUniversal.jsonChecker(req.body, ['devicedata'], [true])) {
         res.status(400);
         res.send({
@@ -482,8 +478,8 @@ exports.createUserInfo = (req, res, next) => {
         });
         return;
       }
-      devicedata = db_conn.escape(req.body.devicedata);
-      clientid = sidUniversal.randomString(64);
+      const devicedata = db_conn.escape(req.body.devicedata);
+      const clientid = sidUniversal.randomString(64);
       db_conn.query('INSERT INTO client_list (clientid, client_data) VALUES(\'' + clientid + '\', ' + devicedata + ')', async (error, results, fields) => {
         if (error) {
           console.log(error);
@@ -511,6 +507,7 @@ exports.createUserInfo = (req, res, next) => {
         });
       });
       break;
+    }
     default:
       res.status(400);
       res.send({
@@ -519,7 +516,6 @@ exports.createUserInfo = (req, res, next) => {
         is_vaild: false,
         error: 'Invaild Requested Data Type'
       });
-      return;
   }
 };
 
@@ -536,8 +532,8 @@ exports.verifyUserInfo = (req, res, next) => {
     return;
   }
 
-  let sessid = db_conn.escape(req.body.sessid);
-  let clientid = db_conn.escape(req.body.clientid);
+  const sessid = db_conn.escape(req.body.sessid);
+  const clientid = db_conn.escape(req.body.clientid);
   db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
     if (error) {
       console.log(error);
@@ -627,10 +623,9 @@ exports.verifyUserInfo = (req, res, next) => {
         res.send({
           type: 'error',
 
-          is_vaild: false,
+          is_vaild: false, // eslint-disable-line
           error: 'Invaild Requested Data Type'
         });
-        return;
     }
   });
   // password, sessid
@@ -639,16 +634,13 @@ exports.verifyUserInfo = (req, res, next) => {
 exports.checkExistData = async (req, res, next) => {
   switch (req.params.type) {
     case 'id':
-      sidUniversal.checkExist(db_conn, 'userdata', req.params.type, req.params.data, (is_exist) => {
+      sidUniversal.checkExist(db_conn, 'userdata', req.params.type, req.params.data, (isExist) => {
         res.send({
           type: 'response',
 
-          is_exist: is_exist
+          is_exist: isExist
         });
       });
-      return;
-    default:
-      return;
   }
 };
 
@@ -665,8 +657,8 @@ exports.modifyUserData = (req, res, next) => {
     return;
   }
 
-  let sessid = db_conn.escape(req.body.sessid);
-  let clientid = db_conn.escape(req.body.clientid);
+  const sessid = db_conn.escape(req.body.sessid);
+  const clientid = db_conn.escape(req.body.clientid);
   db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
     if (error) {
       console.log(error);
@@ -773,7 +765,6 @@ exports.modifyUserData = (req, res, next) => {
           is_vaild: false,
           error: 'Invaild Requested Data Type'
         });
-        return;
     }
   });
   // password, nickname

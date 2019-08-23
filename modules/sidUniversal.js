@@ -7,17 +7,17 @@ exports.checkExist = (conn, targetDB, targetName, targetValue, callback) => {
     const sql = 'SELECT * FROM ' + targetDB + ' WHERE ' + targetName + ' = ' + targetValue;
     conn.query(sql, (error, result, field) => {
       if (error) {
-        callback(false);
+        callback(false); // eslint-disable-line
         return;
       }
       if (result.length > 0) {
-        callback(true);
+        callback(true); // eslint-disable-line
         return;
       }
-      callback(false);
+      callback(false); // eslint-disable-line
     });
   } catch (e) {
-    callback(false);
+    callback(false); // eslint-disable-line
   }
 };
 
@@ -41,15 +41,15 @@ exports.jsonChecker = (_json, variablesArray, isMustFilled) => {
     throw new TypeError('Input Data is not an object');
   }
   let cnt = 0;
-  for (let data in _json) {
-    let targetIndex = variablesArray.indexOf(data);
+  for (const data in _json) {
+    const targetIndex = variablesArray.indexOf(data);
     if (targetIndex === -1) continue;
     if (!(_json[data] || !isMustFilled[targetIndex])) return 0;
 
     cnt++;
   }
   if (cnt !== variablesArray.length) return 0;
-  for (let variable in variablesArray) {
+  for (const variable in variablesArray) {
     if (!Object.prototype.hasOwnProperty.call(_json, variablesArray[variable])) return 0;
   }
   return 1;
