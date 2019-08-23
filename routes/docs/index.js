@@ -1,4 +1,4 @@
-/*jshint esversion: 9 */
+/* jshint esversion: 9 */
 
 const express = require('express');
 const router = express.Router();

@@ -1,4 +1,4 @@
-/*jshint esversion: 9 */
+/* jshint esversion: 9 */
 
 const createError = require('http-errors');
 const express = require('express');
@@ -6,7 +6,7 @@ const session = require('express-session');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const passport = require('passport');
+// const passport = require('passport');
 
 const indexRouter = require('./routes/index');
 const userRouter = require('./routes/user');
