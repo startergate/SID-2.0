@@ -13,8 +13,12 @@ const http = require('http');
  */
 let port;
 
-if (process.argv.length >= 3) port = normalizePort(process.env.PORT || '3000');
-else port = normalizePort(process.env.PORT || '80');
+if (process.argv.length >= 3) {
+  port = normalizePort(process.env.PORT || '3000');
+  console.info("Server Started as Dev Mode");
+} else {
+  port = normalizePort(process.env.PORT || '80');
+}
 
 app.set('port', port);
 

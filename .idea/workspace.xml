@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dd0c0e25-4ee6-4015-a48e-5d269ff1ee3b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/www" beforeDir="false" afterPath="$PROJECT_DIR$/bin/www" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -59,12 +60,12 @@
     </option>
   </component>
   <component name="RunManager">
-    <configuration name="www" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="www" working-dir="$PROJECT_DIR$/bin">
+    <configuration name="bin\www" type="NodeJSConfigurationType" temporary="true" application-parameters=" dev" path-to-js-file="bin/www" working-dir="$PROJECT_DIR$">
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Node.js.www" />
+        <item itemvalue="Node.js.bin\www" />
       </list>
     </recent_temporary>
   </component>
@@ -89,7 +90,7 @@
       <workItem from="1566407471664" duration="639000" />
       <workItem from="1566408670422" duration="4651000" />
       <workItem from="1566436413011" duration="3667000" />
-      <workItem from="1566885014079" duration="5800000" />
+      <workItem from="1566885014079" duration="7600000" />
     </task>
     <servers />
   </component>
