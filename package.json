@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "node ./bin/www dev"
+    "dev": "node ./bin/www dev"
   },
   "dependencies": {
     "@startergate/sidjs": "0.0.6",
