@@ -1,5 +1,4 @@
 exports.checkExist = (conn, targetDB, targetName, targetValue, callback) => {
-  console.log(targetDB);
   targetDB = conn.escape(targetDB).split("'").join('');
   targetName = conn.escape(targetName).split("'").join('');
   targetValue = conn.escape(targetValue);

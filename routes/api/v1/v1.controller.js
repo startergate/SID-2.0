@@ -41,7 +41,7 @@ exports.createSession = async (req, res, next) => {
     const sessid = db_conn.escape(req.body.sessid);
     db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
       if (error) {
-        console.log(error);
+        console.error(error);
         res.status(500);
         // 정상 작동 여부 전송
         res.send({
@@ -68,7 +68,7 @@ exports.createSession = async (req, res, next) => {
       }
       db_conn.query('SELECT nickname, pid FROM userdata WHERE pid LIKE \'' + results[0].pid + '\'', async (error, result, fields) => {
         if (error) {
-          console.log(error);
+          console.error(error);
           res.status(500);
           // 정상 작동 여부 전송
           res.send({
@@ -97,7 +97,7 @@ exports.createSession = async (req, res, next) => {
         expireData = expireData.toISOString().slice(0, 19).replace('T', ' ');
 
         db_conn.query('UPDATE session_list SET expire="' + expireData + '" WHERE sessid=' + sessid, (error, results, fields) => {
-          if (error) console.log(error);
+          if (error) console.error(error);
         });
 
         res.status(200);
@@ -134,7 +134,7 @@ exports.createSession = async (req, res, next) => {
     const clientid = db_conn.escape(req.body.clientid); // receive POST json CID
     await db_conn.query('SELECT client_data FROM client_list WHERE (clientid LIKE ' + clientid + ')', async (error, results, fields) => {
       if (error) {
-        console.log(error);
+        console.error(error);
         res.status(500);
         // 정상 작동 여부 전송
         res.send({
@@ -159,7 +159,7 @@ exports.createSession = async (req, res, next) => {
       pw = sha256(pw);
       db_conn.query('SELECT nickname, pid FROM userdata WHERE (id LIKE ' + id + ') AND (pw LIKE \'' + pw + '\')', async (error, results, fields) => {
         if (error) {
-          console.log(error);
+          console.error(error);
           res.status(500);
           // 정상 작동 여부 전송
           res.send({
@@ -199,11 +199,11 @@ exports.createSession = async (req, res, next) => {
         const sessid = sidUniversal.randomString(64);
 
         db_conn.query('INSERT INTO session_list (sessid, pid, clientid, expire) VALUES (\'' + sessid + '\', \'' + results[0].pid + '\', ' + clientid + ', \'' + expireData + '\')', (error, results, fields) => {
-          if (error) console.log(error);
+          if (error) console.error(error);
         });
 
         db_conn.query('UPDATE client_list SET recent_login=now(), recent_id=' + id + ' WHERE clientid=' + clientid, (error, results, fields) => {
-          if (error) console.log(error);
+          if (error) console.error(error);
         });
 
         await res.status(200);
@@ -253,7 +253,7 @@ exports.createUser = async (req, res, next) => {
 
   await db_conn.query('SELECT client_data FROM client_list WHERE (clientid LIKE ' + clientid + ')', async (error, results, fields) => {
     if (error) {
-      console.log(error);
+      console.error(error);
       res.status(500);
       // 정상 작동 여부 전송
       res.send({
@@ -279,7 +279,7 @@ exports.createUser = async (req, res, next) => {
     pw = sha256(pw);
     db_conn.query('INSERT INTO userdata (id,pw,nickname,register_date,pid) VALUES(' + id + ', \'' + pw + '\', ' + nickname + ', now(), \'' + pid + '\')', async (error, results, fields) => {
       if (error) {
-        console.log(error);
+        console.error(error);
         res.status(500);
         // 정상 작동 여부 전송
         res.send({
@@ -321,7 +321,7 @@ exports.deleteSession = (req, res, next) => {
   const clientid = db_conn.escape(req.body.clientid);
   db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
     if (error) {
-      console.log(error);
+      console.error(error);
       res.status(500);
       // 정상 작동 여부 전송
       res.send({
@@ -344,7 +344,7 @@ exports.deleteSession = (req, res, next) => {
     }
     db_conn.query('DELETE FROM session_list WHERE sessid=' + sessid, (error, results, fields) => {
       if (error) {
-        console.log(error);
+        console.error(error);
         res.status(500);
         // 정상 작동 여부 전송
         res.send({
@@ -395,7 +395,7 @@ exports.getUserInfo = (req, res, next) => {
       case 'usname':
         db_conn.query('SELECT id FROM userdata WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
           if (error) {
-            console.log(error);
+            console.error(error);
             res.status(500);
             // 정상 작동 여부 전송
             res.send({
@@ -419,7 +419,7 @@ exports.getUserInfo = (req, res, next) => {
       case 'pfimg':
         db_conn.query('SELECT profile_img FROM userdata WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
           if (error) {
-            console.log(error);
+            console.error(error);
             res.status(500);
             // 정상 작동 여부 전송
             res.send({
@@ -482,7 +482,7 @@ exports.createUserInfo = (req, res, next) => {
       const clientid = sidUniversal.randomString(64);
       db_conn.query('INSERT INTO client_list (clientid, client_data) VALUES(\'' + clientid + '\', ' + devicedata + ')', async (error, results, fields) => {
         if (error) {
-          console.log(error);
+          console.error(error);
           res.status(500);
           // 정상 작동 여부 전송
           res.send({
@@ -536,7 +536,7 @@ exports.verifyUserInfo = (req, res, next) => {
   const clientid = db_conn.escape(req.body.clientid);
   db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
     if (error) {
-      console.log(error);
+      console.error(error);
       res.status(500);
       // 정상 작동 여부 전송
       res.send({
@@ -589,7 +589,7 @@ exports.verifyUserInfo = (req, res, next) => {
         }
         db_conn.query('SELECT pw FROM userdata WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
           if (error) {
-            console.log(error);
+            console.error(error);
             res.status(500);
             // 정상 작동 여부 전송
             res.send({
@@ -661,7 +661,7 @@ exports.modifyUserData = (req, res, next) => {
   const clientid = db_conn.escape(req.body.clientid);
   db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
     if (error) {
-      console.log(error);
+      console.error(error);
       res.status(500);
       // 정상 작동 여부 전송
       res.send({
@@ -689,7 +689,7 @@ exports.modifyUserData = (req, res, next) => {
         value = sha256(req.body.value);
         db_conn.query('UPDATE userdata SET id=\'' + value + '\' WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
           if (error) {
-            console.log(error);
+            console.error(error);
             res.status(500);
             // 정상 작동 여부 전송
             res.send({
@@ -713,7 +713,7 @@ exports.modifyUserData = (req, res, next) => {
         value = sha256(req.body.value);
         db_conn.query('UPDATE userdata SET pw=\'' + value + '\' WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
           if (error) {
-            console.log(error);
+            console.error(error);
             res.status(500);
             // 정상 작동 여부 전송
             res.send({
@@ -736,7 +736,7 @@ exports.modifyUserData = (req, res, next) => {
       case 'nickname':
         db_conn.query('UPDATE userdata SET nickname=\'' + value + '\' WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
           if (error) {
-            console.log(error);
+            console.error(error);
             res.status(500);
             // 정상 작동 여부 전송
             res.send({
