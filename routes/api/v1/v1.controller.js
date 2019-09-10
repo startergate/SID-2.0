@@ -20,7 +20,7 @@ exports.rootRequest = (req, res, next) => {
   res.send({
     type: 'error',
 
-    is_vaild: false,
+    is_valid: false,
     description: 'Prohibited Route'
   });
 };
@@ -32,7 +32,7 @@ exports.createSession = async (req, res, next) => {
       res.send({
         type: 'error',
 
-        is_vaild: false,
+        is_valid: false,
         error: 'Missing Arguments. Require Client ID, Session ID'
       });
       return;
@@ -47,7 +47,7 @@ exports.createSession = async (req, res, next) => {
         res.send({
           type: 'error',
 
-          is_vaild: true,
+          is_valid: true,
           is_succeed: false
         });
         return;
@@ -61,7 +61,7 @@ exports.createSession = async (req, res, next) => {
         res.send({
           type: 'error',
 
-          is_vaild: false,
+          is_valid: false,
           error: 'Error with Session ID or Client ID'
         });
         return;
@@ -74,7 +74,7 @@ exports.createSession = async (req, res, next) => {
           res.send({
             type: 'error',
 
-            is_vaild: true,
+            is_valid: true,
             is_succeed: false
           });
           return;
@@ -84,7 +84,7 @@ exports.createSession = async (req, res, next) => {
           await res.send({
             type: 'error',
 
-            is_vaild: false,
+            is_valid: false,
             error: 'Error with User Information'
           });
           return;
@@ -102,9 +102,9 @@ exports.createSession = async (req, res, next) => {
 
         res.status(200);
         res.send({
-          type: 'response',
+          "type": 'response',
 
-          is_vaild: true,
+          is_valid: true,
           requested_data: [
             'sessid',
             'pid',
@@ -125,12 +125,12 @@ exports.createSession = async (req, res, next) => {
     res.send({
       type: 'error',
 
-      is_vaild: false,
+      is_valid: false,
       error: 'Missing Arguments. Require Client ID, User ID, Password'
     });
   } else {
-    var id = db_conn.escape(req.body.userid); // receive POST json ID
-    var pw = req.body.password; // receive POST json PW
+    const id = db_conn.escape(req.body.userid); // receive POST json ID
+    let pw = req.body.password; // receive POST json PW
     const clientid = db_conn.escape(req.body.clientid); // receive POST json CID
     await db_conn.query('SELECT client_data FROM client_list WHERE (clientid LIKE ' + clientid + ')', async (error, results, fields) => {
       if (error) {
@@ -140,7 +140,7 @@ exports.createSession = async (req, res, next) => {
         res.send({
           type: 'error',
 
-          is_vaild: true,
+          is_valid: true,
           is_succeed: false
         });
         return;
@@ -150,7 +150,7 @@ exports.createSession = async (req, res, next) => {
         await res.send({
           type: 'error',
 
-          is_vaild: false,
+          is_valid: false,
           error: 'Error with Client ID'
         });
         return;
@@ -165,7 +165,7 @@ exports.createSession = async (req, res, next) => {
           res.send({
             type: 'error',
 
-            is_vaild: true,
+            is_valid: true,
             is_succeed: false
           });
           return;
@@ -180,12 +180,12 @@ exports.createSession = async (req, res, next) => {
           await res.send({
             type: 'error',
 
-            is_vaild: false,
+            is_valid: false,
             error: 'Error with User Information'
           });
           return;
         }
-        var expireData;
+        let expireData;
         if (req.body.isPermanent) {
           expireData = new Date(0);
         } else {
@@ -210,7 +210,7 @@ exports.createSession = async (req, res, next) => {
         await res.send({
           type: 'response',
 
-          is_vaild: true,
+          is_valid: true,
           requested_data: [
             'sessid',
             'pid',
@@ -236,17 +236,16 @@ exports.createUser = async (req, res, next) => {
     res.send({
       type: 'error',
 
-      is_vaild: false,
+      is_valid: false,
       error: 'Missing Arguments. Require Client ID, User ID, Password'
     });
     return;
   }
 
-  var id = db_conn.escape(req.body.userid); // receive POST json ID
-  var pw = req.body.password; // receive POST json PW
-  var clientid = db_conn.escape(req.body.clientid); // receive POST json CID
-  console.log(clientid);
-  var nickname = db_conn.escape(req.body.nickname); // receive POST json CID
+  const id = db_conn.escape(req.body.userid); // receive POST json ID
+  let pw = req.body.password; // receive POST json PW
+  const clientid = db_conn.escape(req.body.clientid); // receive POST json CID
+  let nickname = db_conn.escape(req.body.nickname); // receive POST json CID
   if (nickname === '') {
     nickname = id;
   }
@@ -259,23 +258,22 @@ exports.createUser = async (req, res, next) => {
       res.send({
         type: 'error',
 
-        is_vaild: true,
+        is_valid: true,
         is_succeed: false
       });
       return;
     }
     if (results.length < 1) {
-      console.log('X');
       await res.status(400);
       await res.send({
         type: 'error',
 
-        is_vaild: false,
+        is_valid: false,
         error: 'Error with Client ID'
       });
       return;
     }
-    var pid = md5(id + pw + id);
+    const pid = md5(id + pw + id);
     pw = sha256(pw);
     db_conn.query('INSERT INTO userdata (id,pw,nickname,register_date,pid) VALUES(' + id + ', \'' + pw + '\', ' + nickname + ', now(), \'' + pid + '\')', async (error, results, fields) => {
       if (error) {
@@ -285,7 +283,7 @@ exports.createUser = async (req, res, next) => {
         res.send({
           type: 'response',
 
-          is_vaild: true,
+          is_valid: true,
           is_succeed: false
         });
         return;
@@ -296,7 +294,7 @@ exports.createUser = async (req, res, next) => {
       res.send({
         type: 'response',
 
-        is_vaild: true,
+        is_valid: true,
         is_succeed: true,
         private_id: pid
       });
@@ -311,7 +309,7 @@ exports.deleteSession = (req, res, next) => {
     res.send({
       type: 'error',
 
-      is_vaild: false,
+      is_valid: false,
       error: 'Missing Arguments. Require Client ID, Session ID'
     });
     return;
@@ -327,7 +325,7 @@ exports.deleteSession = (req, res, next) => {
       res.send({
         type: 'error',
 
-        is_vaild: true,
+        is_valid: true,
         is_succeed: false
       });
       return;
@@ -337,7 +335,7 @@ exports.deleteSession = (req, res, next) => {
       res.send({
         type: 'error',
 
-        is_vaild: false,
+        is_valid: false,
         error: 'Error with Session ID or Client ID'
       });
       return;
@@ -350,7 +348,7 @@ exports.deleteSession = (req, res, next) => {
         res.send({
           type: 'error',
 
-          is_vaild: true,
+          is_valid: true,
           is_succeed: false
         });
         return;
@@ -359,7 +357,7 @@ exports.deleteSession = (req, res, next) => {
       res.send({
         type: 'response',
 
-        is_vaild: true,
+        is_valid: true,
         is_succeed: true
       });
     });
@@ -376,7 +374,7 @@ exports.getUserInfo = (req, res, next) => {
       res.send({
         type: 'error',
 
-        is_vaild: true,
+        is_valid: true,
         is_succeed: false
       });
       return;
@@ -386,7 +384,7 @@ exports.getUserInfo = (req, res, next) => {
       res.send({
         type: 'error',
 
-        is_vaild: false,
+        is_valid: false,
         error: 'Error with Session ID or Client ID'
       });
       return;
@@ -401,7 +399,7 @@ exports.getUserInfo = (req, res, next) => {
             res.send({
               type: 'error',
 
-              is_vaild: true,
+              is_valid: true,
               is_succeed: false
             });
             return;
@@ -410,7 +408,7 @@ exports.getUserInfo = (req, res, next) => {
           res.send({
             type: 'response',
 
-            is_vaild: true,
+            is_valid: true,
             requested_data: 'usname',
             response_data: results[0].id
           });
@@ -425,7 +423,7 @@ exports.getUserInfo = (req, res, next) => {
             res.send({
               type: 'response',
 
-              is_vaild: true,
+              is_valid: true,
               is_succeed: false
             });
             return;
@@ -434,7 +432,7 @@ exports.getUserInfo = (req, res, next) => {
           res.send({
             type: 'response',
 
-            is_vaild: true,
+            is_valid: true,
             requested_data: 'pfimg',
             response_data: results[0].profile_img
           });
@@ -445,7 +443,7 @@ exports.getUserInfo = (req, res, next) => {
         res.send({
           type: 'error',
 
-          is_vaild: false,
+          is_valid: false,
           error: 'Invaild Requested Data Type'
         });
     }
@@ -461,7 +459,7 @@ exports.createUserInfo = (req, res, next) => {
     res.send({
       type: 'error',
 
-      is_vaild: false,
+      is_valid: false,
       error: 'Missing Arguments. Require Requested Data Type'
     });
     return;
@@ -473,7 +471,7 @@ exports.createUserInfo = (req, res, next) => {
         res.send({
           type: 'error',
 
-          is_vaild: false,
+          is_valid: false,
           error: 'Missing Arguments. Require Requested Data Type'
         });
         return;
@@ -488,7 +486,7 @@ exports.createUserInfo = (req, res, next) => {
           res.send({
             type: 'error',
 
-            is_vaild: true,
+            is_valid: true,
             is_succeed: false
           });
           return;
@@ -499,7 +497,7 @@ exports.createUserInfo = (req, res, next) => {
         res.send({
           type: 'response',
 
-          is_vaild: true,
+          is_valid: true,
           is_succeed: true,
 
           requested_data: 'clientid',
@@ -513,7 +511,7 @@ exports.createUserInfo = (req, res, next) => {
       res.send({
         type: 'error',
 
-        is_vaild: false,
+        is_valid: false,
         error: 'Invaild Requested Data Type'
       });
   }
@@ -526,7 +524,7 @@ exports.verifyUserInfo = (req, res, next) => {
     res.send({
       type: 'error',
 
-      is_vaild: false,
+      is_valid: false,
       error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID'
     });
     return;
@@ -542,7 +540,7 @@ exports.verifyUserInfo = (req, res, next) => {
       res.send({
         type: 'error',
 
-        is_vaild: true,
+        is_valid: true,
         is_succeed: false
       });
       return;
@@ -553,14 +551,14 @@ exports.verifyUserInfo = (req, res, next) => {
         res.send({
           type: 'response',
 
-          is_vaild: false
+          is_valid: false
         });
       } else {
         res.status(200);
         res.send({
           type: 'response',
 
-          is_vaild: true
+          is_valid: true
         });
       }
       return;
@@ -570,7 +568,7 @@ exports.verifyUserInfo = (req, res, next) => {
       res.send({
         type: 'error',
 
-        is_vaild: false,
+        is_valid: false,
         error: 'Invaild Session ID or Client ID'
       });
       return;
@@ -582,7 +580,7 @@ exports.verifyUserInfo = (req, res, next) => {
           res.send({
             type: 'error',
 
-            is_vaild: false,
+            is_valid: false,
             error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID, Value'
           });
           return;
@@ -595,7 +593,7 @@ exports.verifyUserInfo = (req, res, next) => {
             res.send({
               type: 'response',
 
-              is_vaild: true,
+              is_valid: true,
               is_succeed: false
             });
             return;
@@ -605,14 +603,14 @@ exports.verifyUserInfo = (req, res, next) => {
             res.send({
               type: 'response',
 
-              is_vaild: true
+              is_valid: true
             });
           } else {
             res.status(200);
             res.send({
               type: 'response',
 
-              is_vaild: false
+              is_valid: false
             });
           }
         });
@@ -623,7 +621,7 @@ exports.verifyUserInfo = (req, res, next) => {
         res.send({
           type: 'error',
 
-          is_vaild: false, // eslint-disable-line
+          is_valid: false, // eslint-disable-line
           error: 'Invaild Requested Data Type'
         });
     }
@@ -651,7 +649,7 @@ exports.modifyUserData = (req, res, next) => {
     res.send({
       type: 'error',
 
-      is_vaild: false,
+      is_valid: false,
       error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID, Value'
     });
     return;
@@ -667,7 +665,7 @@ exports.modifyUserData = (req, res, next) => {
       res.send({
         type: 'error',
 
-        is_vaild: true,
+        is_valid: true,
         is_succeed: false
       });
       return;
@@ -678,7 +676,7 @@ exports.modifyUserData = (req, res, next) => {
       res.send({
         type: 'error',
 
-        is_vaild: false,
+        is_valid: false,
         error: 'Invaild Session ID or Client ID'
       });
       return;
@@ -695,7 +693,7 @@ exports.modifyUserData = (req, res, next) => {
             res.send({
               type: 'response',
 
-              is_vaild: true,
+              is_valid: true,
               is_succeed: false
             });
             return;
@@ -704,7 +702,7 @@ exports.modifyUserData = (req, res, next) => {
           res.send({
             type: 'response',
 
-            is_vaild: true,
+            is_valid: true,
             is_processed: true
           });
         });
@@ -719,7 +717,7 @@ exports.modifyUserData = (req, res, next) => {
             res.send({
               type: 'response',
 
-              is_vaild: true,
+              is_valid: true,
               is_succeed: false
             });
             return;
@@ -728,7 +726,7 @@ exports.modifyUserData = (req, res, next) => {
           res.send({
             type: 'response',
 
-            is_vaild: true,
+            is_valid: true,
             is_processed: true
           });
         });
@@ -742,7 +740,7 @@ exports.modifyUserData = (req, res, next) => {
             res.send({
               type: 'response',
 
-              is_vaild: true,
+              is_valid: true,
               is_succeed: false
             });
             return;
@@ -751,7 +749,7 @@ exports.modifyUserData = (req, res, next) => {
           res.send({
             type: 'response',
 
-            is_vaild: true,
+            is_valid: true,
             is_processed: true
           });
         });
@@ -762,7 +760,7 @@ exports.modifyUserData = (req, res, next) => {
         res.send({
           type: 'error',
 
-          is_vaild: false,
+          is_valid: false,
           error: 'Invaild Requested Data Type'
         });
     }
