@@ -21,6 +21,7 @@ exports.rootRequest = (req, res, next) => {
     type: 'error',
 
     is_valid: false,
+    is_vaild: false,
     description: 'Prohibited Route'
   });
 };
@@ -33,6 +34,7 @@ exports.createSession = async (req, res, next) => {
         type: 'error',
 
         is_valid: false,
+        is_vaild: false,
         error: 'Missing Arguments. Require Client ID, Session ID'
       });
       return;
@@ -48,6 +50,7 @@ exports.createSession = async (req, res, next) => {
           type: 'error',
 
           is_valid: true,
+          is_vaild: true,
           is_succeed: false
         });
         return;
@@ -62,6 +65,7 @@ exports.createSession = async (req, res, next) => {
           type: 'error',
 
           is_valid: false,
+          is_vaild: false,
           error: 'Error with Session ID or Client ID'
         });
         return;
@@ -75,6 +79,7 @@ exports.createSession = async (req, res, next) => {
             type: 'error',
 
             is_valid: true,
+            is_vaild: true,
             is_succeed: false
           });
           return;
@@ -85,6 +90,7 @@ exports.createSession = async (req, res, next) => {
             type: 'error',
 
             is_valid: false,
+            is_vaild: false,
             error: 'Error with User Information'
           });
           return;
@@ -105,6 +111,7 @@ exports.createSession = async (req, res, next) => {
           "type": 'response',
 
           is_valid: true,
+          is_vaild: true,
           requested_data: [
             'sessid',
             'pid',
@@ -126,6 +133,7 @@ exports.createSession = async (req, res, next) => {
       type: 'error',
 
       is_valid: false,
+      is_vaild: false,
       error: 'Missing Arguments. Require Client ID, User ID, Password'
     });
   } else {
@@ -141,6 +149,7 @@ exports.createSession = async (req, res, next) => {
           type: 'error',
 
           is_valid: true,
+          is_vaild: true,
           is_succeed: false
         });
         return;
@@ -151,6 +160,7 @@ exports.createSession = async (req, res, next) => {
           type: 'error',
 
           is_valid: false,
+          is_vaild: false,
           error: 'Error with Client ID'
         });
         return;
@@ -166,6 +176,7 @@ exports.createSession = async (req, res, next) => {
             type: 'error',
 
             is_valid: true,
+            is_vaild: true,
             is_succeed: false
           });
           return;
@@ -181,6 +192,7 @@ exports.createSession = async (req, res, next) => {
             type: 'error',
 
             is_valid: false,
+            is_vaild: false,
             error: 'Error with User Information'
           });
           return;
@@ -211,6 +223,7 @@ exports.createSession = async (req, res, next) => {
           type: 'response',
 
           is_valid: true,
+          is_vaild: true,
           requested_data: [
             'sessid',
             'pid',
@@ -237,6 +250,7 @@ exports.createUser = async (req, res, next) => {
       type: 'error',
 
       is_valid: false,
+      is_vaild: false,
       error: 'Missing Arguments. Require Client ID, User ID, Password'
     });
     return;
@@ -259,6 +273,7 @@ exports.createUser = async (req, res, next) => {
         type: 'error',
 
         is_valid: true,
+        is_vaild: true,
         is_succeed: false
       });
       return;
@@ -269,6 +284,7 @@ exports.createUser = async (req, res, next) => {
         type: 'error',
 
         is_valid: false,
+        is_vaild: false,
         error: 'Error with Client ID'
       });
       return;
@@ -284,6 +300,7 @@ exports.createUser = async (req, res, next) => {
           type: 'response',
 
           is_valid: true,
+          is_vaild: true,
           is_succeed: false
         });
         return;
@@ -295,6 +312,7 @@ exports.createUser = async (req, res, next) => {
         type: 'response',
 
         is_valid: true,
+        is_vaild: true,
         is_succeed: true,
         private_id: pid
       });
@@ -310,6 +328,7 @@ exports.deleteSession = (req, res, next) => {
       type: 'error',
 
       is_valid: false,
+      is_vaild: false,
       error: 'Missing Arguments. Require Client ID, Session ID'
     });
     return;
@@ -326,6 +345,7 @@ exports.deleteSession = (req, res, next) => {
         type: 'error',
 
         is_valid: true,
+        is_vaild: true,
         is_succeed: false
       });
       return;
@@ -336,6 +356,7 @@ exports.deleteSession = (req, res, next) => {
         type: 'error',
 
         is_valid: false,
+        is_vaild: false,
         error: 'Error with Session ID or Client ID'
       });
       return;
@@ -349,6 +370,7 @@ exports.deleteSession = (req, res, next) => {
           type: 'error',
 
           is_valid: true,
+          is_vaild: true,
           is_succeed: false
         });
         return;
@@ -358,6 +380,7 @@ exports.deleteSession = (req, res, next) => {
         type: 'response',
 
         is_valid: true,
+        is_vaild: true,
         is_succeed: true
       });
     });
@@ -375,6 +398,7 @@ exports.getUserInfo = (req, res, next) => {
         type: 'error',
 
         is_valid: true,
+        is_vaild: true,
         is_succeed: false
       });
       return;
@@ -385,6 +409,7 @@ exports.getUserInfo = (req, res, next) => {
         type: 'error',
 
         is_valid: false,
+        is_vaild: false,
         error: 'Error with Session ID or Client ID'
       });
       return;
@@ -400,6 +425,7 @@ exports.getUserInfo = (req, res, next) => {
               type: 'error',
 
               is_valid: true,
+              is_vaild: true,
               is_succeed: false
             });
             return;
@@ -409,6 +435,7 @@ exports.getUserInfo = (req, res, next) => {
             type: 'response',
 
             is_valid: true,
+            is_vaild: true,
             requested_data: 'usname',
             response_data: results[0].id
           });
@@ -424,6 +451,7 @@ exports.getUserInfo = (req, res, next) => {
               type: 'response',
 
               is_valid: true,
+              is_vaild: true,
               is_succeed: false
             });
             return;
@@ -433,6 +461,7 @@ exports.getUserInfo = (req, res, next) => {
             type: 'response',
 
             is_valid: true,
+            is_vaild: true,
             requested_data: 'pfimg',
             response_data: results[0].profile_img
           });
@@ -444,6 +473,7 @@ exports.getUserInfo = (req, res, next) => {
           type: 'error',
 
           is_valid: false,
+          is_vaild: false,
           error: 'Invaild Requested Data Type'
         });
     }
@@ -460,6 +490,7 @@ exports.createUserInfo = (req, res, next) => {
       type: 'error',
 
       is_valid: false,
+      is_vaild: false,
       error: 'Missing Arguments. Require Requested Data Type'
     });
     return;
@@ -472,6 +503,7 @@ exports.createUserInfo = (req, res, next) => {
           type: 'error',
 
           is_valid: false,
+          is_vaild: false,
           error: 'Missing Arguments. Require Requested Data Type'
         });
         return;
@@ -487,6 +519,7 @@ exports.createUserInfo = (req, res, next) => {
             type: 'error',
 
             is_valid: true,
+            is_vaild: true,
             is_succeed: false
           });
           return;
@@ -498,6 +531,7 @@ exports.createUserInfo = (req, res, next) => {
           type: 'response',
 
           is_valid: true,
+          is_vaild: true,
           is_succeed: true,
 
           requested_data: 'clientid',
@@ -512,6 +546,7 @@ exports.createUserInfo = (req, res, next) => {
         type: 'error',
 
         is_valid: false,
+        is_vaild: false,
         error: 'Invaild Requested Data Type'
       });
   }
@@ -525,6 +560,7 @@ exports.verifyUserInfo = (req, res, next) => {
       type: 'error',
 
       is_valid: false,
+      is_vaild: false,
       error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID'
     });
     return;
@@ -541,6 +577,7 @@ exports.verifyUserInfo = (req, res, next) => {
         type: 'error',
 
         is_valid: true,
+        is_vaild: true,
         is_succeed: false
       });
       return;
@@ -551,7 +588,8 @@ exports.verifyUserInfo = (req, res, next) => {
         res.send({
           type: 'response',
 
-          is_valid: false
+          is_valid: false,
+          is_vaild: false
         });
       } else {
         res.status(200);
@@ -559,6 +597,7 @@ exports.verifyUserInfo = (req, res, next) => {
           type: 'response',
 
           is_valid: true
+          is_vaild: true
         });
       }
       return;
@@ -569,6 +608,7 @@ exports.verifyUserInfo = (req, res, next) => {
         type: 'error',
 
         is_valid: false,
+        is_vaild: false,
         error: 'Invaild Session ID or Client ID'
       });
       return;
@@ -581,6 +621,7 @@ exports.verifyUserInfo = (req, res, next) => {
             type: 'error',
 
             is_valid: false,
+            is_vaild: false,
             error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID, Value'
           });
           return;
@@ -594,6 +635,7 @@ exports.verifyUserInfo = (req, res, next) => {
               type: 'response',
 
               is_valid: true,
+              is_vaild: true,
               is_succeed: false
             });
             return;
@@ -603,14 +645,16 @@ exports.verifyUserInfo = (req, res, next) => {
             res.send({
               type: 'response',
 
-              is_valid: true
+              is_valid: true,
+              is_vaild: true
             });
           } else {
             res.status(200);
             res.send({
               type: 'response',
 
-              is_valid: false
+              is_valid: false,
+              is_vaild: false
             });
           }
         });
@@ -621,7 +665,8 @@ exports.verifyUserInfo = (req, res, next) => {
         res.send({
           type: 'error',
 
-          is_valid: false, // eslint-disable-line
+          is_valid: false,
+          is_vaild: false,
           error: 'Invaild Requested Data Type'
         });
     }
@@ -650,6 +695,7 @@ exports.modifyUserData = (req, res, next) => {
       type: 'error',
 
       is_valid: false,
+      is_vaild: false,
       error: 'Missing Arguments. Require Requested Data Type, Client ID, Session ID, Value'
     });
     return;
@@ -666,6 +712,7 @@ exports.modifyUserData = (req, res, next) => {
         type: 'error',
 
         is_valid: true,
+        is_vaild: true,
         is_succeed: false
       });
       return;
@@ -677,6 +724,7 @@ exports.modifyUserData = (req, res, next) => {
         type: 'error',
 
         is_valid: false,
+        is_vaild: false,
         error: 'Invaild Session ID or Client ID'
       });
       return;
@@ -694,6 +742,7 @@ exports.modifyUserData = (req, res, next) => {
               type: 'response',
 
               is_valid: true,
+              is_vaild: true,
               is_succeed: false
             });
             return;
@@ -703,6 +752,7 @@ exports.modifyUserData = (req, res, next) => {
             type: 'response',
 
             is_valid: true,
+            is_vaild: true,
             is_processed: true
           });
         });
@@ -718,6 +768,7 @@ exports.modifyUserData = (req, res, next) => {
               type: 'response',
 
               is_valid: true,
+              is_vaild: true,
               is_succeed: false
             });
             return;
@@ -727,6 +778,7 @@ exports.modifyUserData = (req, res, next) => {
             type: 'response',
 
             is_valid: true,
+            is_vaild: true,
             is_processed: true
           });
         });
@@ -741,6 +793,7 @@ exports.modifyUserData = (req, res, next) => {
               type: 'response',
 
               is_valid: true,
+              is_vaild: true,
               is_succeed: false
             });
             return;
@@ -750,6 +803,7 @@ exports.modifyUserData = (req, res, next) => {
             type: 'response',
 
             is_valid: true,
+            is_vaild: true,
             is_processed: true
           });
         });
@@ -761,6 +815,7 @@ exports.modifyUserData = (req, res, next) => {
           type: 'error',
 
           is_valid: false,
+          is_vaild: false,
           error: 'Invaild Requested Data Type'
         });
     }
