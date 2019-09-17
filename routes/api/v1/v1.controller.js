@@ -596,7 +596,7 @@ exports.verifyUserInfo = (req, res, next) => {
         res.send({
           type: 'response',
 
-          is_valid: true
+          is_valid: true,
           is_vaild: true
         });
       }
