@@ -1,4 +1,4 @@
-/*jshint esversion: 9 */
+/* jshint esversion: 9 */
 
 const createError = require('http-errors');
 const express = require('express');
@@ -6,15 +6,14 @@ const session = require('express-session');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const passport = require('passport');
+// const passport = require('passport');
 
-var indexRouter = require('./routes/index');
-var userRouter = require('./routes/user');
-var apiRouter = require('./routes/api');
-var apiv1Router = require('./routes/api/v1');
-var docsRouter = require('./routes/docs');
+const indexRouter = require('./routes/index');
+const userRouter = require('./routes/user');
+const apiRouter = require('./routes/api');
+const docsRouter = require('./routes/docs');
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -44,7 +43,6 @@ app.use((req, res, next) => {
 app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/api', apiRouter);
-app.use('/api/v1', apiv1Router);
 app.use('/docs', docsRouter);
 
 // catch 404 and forward to error handler
