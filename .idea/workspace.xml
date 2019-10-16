@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dd0c0e25-4ee6-4015-a48e-5d269ff1ee3b" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/api/v1/v1.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api/v1/v1.controller.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -117,7 +118,13 @@
       <workItem from="1568593153362" duration="599000" />
       <workItem from="1568632250113" duration="1923000" />
       <workItem from="1568672292511" duration="78000" />
-      <workItem from="1568717656745" duration="838000" />
+      <workItem from="1568717656745" duration="1451000" />
+      <workItem from="1568721660396" duration="1229000" />
+      <workItem from="1568847684730" duration="599000" />
+      <workItem from="1569833522857" duration="673000" />
+      <workItem from="1569906627123" duration="616000" />
+      <workItem from="1571235763619" duration="153000" />
+      <workItem from="1571236633079" duration="352000" />
     </task>
     <servers />
   </component>
