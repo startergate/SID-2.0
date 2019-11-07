@@ -5,20 +5,22 @@
  */
 
 const app = require('../app');
+const fs = require('fs');
 const debug = require('debug')('sid-api-server:server');
 const http = require('http');
+const https = require('https');
+
+const privateKey = fs.readFileSync('../cert/server.key', 'utf8');
+const certificate = fs.readFileSync('../cert/server.crt', 'utf8');
+
+const credentials = {key: privateKey, cert: certificate};
+
+if (process.argv.length >= 3) console.info("Server Started as Dev Mode");
 
 /**
  * Get port from environment and store in Express.
  */
-let port;
-
-if (process.argv.length >= 3) {
-  port = normalizePort(process.env.PORT || '3000');
-  console.info("Server Started as Dev Mode");
-} else {
-  port = normalizePort(process.env.PORT || '80');
-}
+const port = normalizePort(process.env.PORT || '3000');
 
 app.set('port', port);
 
@@ -27,6 +29,7 @@ app.set('port', port);
  */
 
 const server = http.createServer(app);
+const sslServer = https.createServer(credentials, app);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -35,6 +38,10 @@ const server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
+sslServer.listen(port);
+sslServer.on('error', onError);
+sslServer.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.

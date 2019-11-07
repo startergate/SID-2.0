@@ -10,13 +10,14 @@
     "@startergate/sidjs": "0.0.7",
     "async": "^3.1.0",
     "body-parser": "^1.18.3",
-    "cross-env": "^6.0.3",
     "cookie-parser": "^1.4.4",
+    "cross-env": "^6.0.3",
     "debug": "^4.1.1",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "express-session": "^1.16.1",
     "http-errors": "^1.7.2",
+    "https": "^1.0.0",
     "js-sha256": "^0.9.0",
     "md5": "^2.2.1",
     "morgan": "^1.9.1",
@@ -27,8 +28,8 @@
     "pm2": "^4.1.2"
   },
   "devDependencies": {
-    "semistandard": "*",
-    "nodemon": "^1.19.4"
+    "nodemon": "^1.19.4",
+    "semistandard": "*"
   },
   "main": "index.js",
   "repository": "https://github.com/startergate/SID-2.0.git",
