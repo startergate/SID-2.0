@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "cross-env NODE_PATH=./ pm2 start ./bin/www",
-    "dev": "cross-env NODE_PATH=./ nodemon --watch ./ ./bin/www dev"
+    "dev": "cross-env NODE_PATH=./ nodemon --watch ./ ./bin/www dev",
+    "test": "cross-env NODE_PATH=./ node ./bin/www"
   },
   "dependencies": {
     "@startergate/sidjs": "0.0.7",
