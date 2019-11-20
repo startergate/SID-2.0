@@ -29,7 +29,7 @@
     "pm2": "^4.1.2"
   },
   "devDependencies": {
-    "nodemon": "^1.19.4",
+    "nodemon": "^2.0.0",
     "semistandard": "*"
   },
   "main": "index.js",
