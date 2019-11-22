@@ -15,7 +15,7 @@ const db_conn = mysql.createConnection({ // eslint-disable-line
 
 db_conn.connect();
 
-exports.rootRequest = (req, res, next) => {
+exports.rootRequest = (req, res) => {
   res.status(400);
   res.send({
     type: 'error',
@@ -26,7 +26,7 @@ exports.rootRequest = (req, res, next) => {
   });
 };
 
-exports.createSession = async (req, res, next) => {
+exports.createSession = async (req, res) => {
   if ('sessid' in req.body) {
     if (!(req.body.type === 'login' && sidUniversal.jsonChecker(req.body, ['clientid', 'sessid'], [true, true]))) { // POST DATA 무결성 검증
       res.status(400);
@@ -242,7 +242,7 @@ exports.createSession = async (req, res, next) => {
   }
 };
 
-exports.createUser = async (req, res, next) => {
+exports.createUser = async (req, res) => {
   // POST DATA 무결성 검증
   if (!(req.body.type === 'register' && sidUniversal.jsonChecker(req.body, ['clientid', 'userid', 'password'], [true, true, true]))) {
     res.status(400);
@@ -320,7 +320,7 @@ exports.createUser = async (req, res, next) => {
   });
 };
 
-exports.deleteSession = (req, res, next) => {
+exports.deleteSession = (req, res) => {
   // POST DATA 무결성 검증
   if (!(req.body.type === 'logout' && sidUniversal.jsonChecker(req.body, ['clientid', 'sessid'], [true, true]))) {
     res.status(400);
@@ -387,7 +387,7 @@ exports.deleteSession = (req, res, next) => {
   });
 };
 
-exports.getUserInfo = (req, res, next) => {
+exports.getUserInfo = (req, res) => {
   const sessid = db_conn.escape(req.params.sessid);
   const clientid = db_conn.escape(req.params.clientid);
   db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
@@ -482,7 +482,7 @@ exports.getUserInfo = (req, res, next) => {
   // username, profile img
 };
 
-exports.createUserInfo = (req, res, next) => {
+exports.createUserInfo = (req, res) => {
   // POST DATA 무결성 검증
   if (!(req.body.data === req.params.data && sidUniversal.jsonChecker(req.body, ['data'], [true]))) {
     res.status(400);
@@ -552,7 +552,7 @@ exports.createUserInfo = (req, res, next) => {
   }
 };
 
-exports.verifyUserInfo = (req, res, next) => {
+exports.verifyUserInfo = (req, res) => {
   // POST DATA 무결성 검증
   if (!(req.body.data === req.params.data && sidUniversal.jsonChecker(req.body, ['data', 'clientid', 'sessid'], [true, true, true]))) {
     res.status(400);
@@ -674,7 +674,7 @@ exports.verifyUserInfo = (req, res, next) => {
   // password, sessid
 };
 
-exports.checkExistData = async (req, res, next) => {
+exports.checkExistData = async (req, res) => {
   switch (req.params.type) {
     case 'id':
       sidUniversal.checkExist(db_conn, 'userdata', req.params.type, req.params.data, (isExist) => {
@@ -687,7 +687,7 @@ exports.checkExistData = async (req, res, next) => {
   }
 };
 
-exports.modifyUserData = (req, res, next) => {
+exports.modifyUserData = (req, res) => {
   // POST DATA 무결성 검증
   if (!(req.body.type === 'modify' && sidUniversal.jsonChecker(req.body, ['data', 'clientid', 'sessid', 'value'], [true, true, true, true]))) {
     res.status(400);
