@@ -5,7 +5,7 @@ const sha256 = require('js-sha256').sha256;
 
 const sidUniversal = require('../../../modules/sidUniversal');
 
-const db_conn = mysql.createConnection({ // eslint-disable-line
+const db_conn = mysql.createConnection({
   // host: 'db.donote.co',
   host: '54.180.27.126',
   user: 'root',
