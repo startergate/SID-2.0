@@ -44,12 +44,12 @@
     <script src="/javascripts/sid.js" charset="utf-8"></script>
     <script type="text/javascript">
       const sid = new SID();
-      var status = 'idEnter';
+      let status = 'idEnter';
       $('.btnContinue').click(function(event) {
         event.preventDefault();
-        if (status == 'idEnter') {
-          var id = $('#id_input > input').val();
-          if (id != '') {
+        if (status === 'idEnter') {
+          let id = $('#id_input > input').val();
+          if (id !== '') {
             sid.checkID(id, function(is_exist) {
               status = 'pwEnter';
               $('#back').removeClass('hidden');
@@ -66,7 +66,7 @@
             $('#idError').text('ID를 입력해주세요');
             $('#id_input > input').addClass('sidWarningInput');
           }
-        } else if (status == 'pwEnter') {
+        } else if (status === 'pwEnter') {
           if ($('#pw_input > input').val()) {
             sid.login('<%= clientid %>', $('#id_input > input').val(), $('#pw_input > input').val(), function(userdata) {
               if (userdata.hasOwnProperty('error')) {
@@ -80,10 +80,10 @@
             $('#pwError').text('비밀번호를 입력해주세요');
             $('#pw_input > input').addClass('sidWarningInput');
           }
-        } else if (status == 'registerEnter') {
+        } else if (status === 'registerEnter') {
           if ($('#pw_input > input').val()) {
-            var nickname = $('#nk_input > input').val()
-            if (nickname == '') {
+            let nickname = $('#nk_input > input').val()
+            if (nickname === '') {
               nickname = 'User';
             }
             sid.register('<%= clientid %>', $('#id_input > input').val(), $('#pw_input > input').val(), nickname, function(pid) {
