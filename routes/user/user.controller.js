@@ -1,7 +1,7 @@
 const sidUniversal = require('../../modules/sidUniversal');
 
 exports.index = (req, res, next) => {
-  res.redirect('/user/info');
+  res.redirect('/user/login');
 };
 
 exports.info = (req, res, next) => {
