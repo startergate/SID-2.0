@@ -5,7 +5,7 @@ const sha256 = require('js-sha256').sha256;
 
 const sidUniversal = require('../../../modules/sidUniversal');
 
-const db_conn = mysql.createConnection({
+const dbConnection = mysql.createConnection({
   // host: 'db.donote.co',
   host: '54.180.27.126',
   user: 'root',
@@ -13,7 +13,7 @@ const db_conn = mysql.createConnection({
   database: 'sid_userdata'
 });
 
-db_conn.connect();
+dbConnection.connect();
 
 exports.rootRequest = (req, res) => {
   res.status(400);
@@ -39,9 +39,9 @@ exports.createSession = async (req, res) => {
       });
       return;
     }
-    const clientid = db_conn.escape(req.body.clientid); // receive POST json CID
-    const sessid = db_conn.escape(req.body.sessid);
-    db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
+    const clientid = dbConnection.escape(req.body.clientid); // receive POST json CID
+    const sessid = dbConnection.escape(req.body.sessid);
+    dbConnection.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
       if (error) {
         console.error(error);
         res.status(500);
@@ -70,7 +70,7 @@ exports.createSession = async (req, res) => {
         });
         return;
       }
-      db_conn.query('SELECT nickname, pid FROM userdata WHERE pid LIKE \'' + results[0].pid + '\'', async (error, result, fields) => {
+      dbConnection.query('SELECT nickname, pid FROM userdata WHERE pid LIKE \'' + results[0].pid + '\'', async (error, result, fields) => {
         if (error) {
           console.error(error);
           res.status(500);
@@ -102,13 +102,13 @@ exports.createSession = async (req, res) => {
         }
         expireData = expireData.toISOString().slice(0, 19).replace('T', ' ');
 
-        db_conn.query('UPDATE session_list SET expire="' + expireData + '" WHERE sessid=' + sessid, (error, results, fields) => {
+        dbConnection.query('UPDATE session_list SET expire="' + expireData + '" WHERE sessid=' + sessid, (error, results, fields) => {
           if (error) console.error(error);
         });
 
         res.status(200);
         res.send({
-          "type": 'response',
+          type: 'response',
 
           is_valid: true,
           is_vaild: true,
@@ -137,10 +137,10 @@ exports.createSession = async (req, res) => {
       error: 'Missing Arguments. Require Client ID, User ID, Password'
     });
   } else {
-    const id = db_conn.escape(req.body.userid); // receive POST json ID
+    const id = dbConnection.escape(req.body.userid); // receive POST json ID
     let pw = req.body.password; // receive POST json PW
-    const clientid = db_conn.escape(req.body.clientid); // receive POST json CID
-    await db_conn.query('SELECT client_data FROM client_list WHERE (clientid LIKE ' + clientid + ')', async (error, results, fields) => {
+    const clientid = dbConnection.escape(req.body.clientid); // receive POST json CID
+    await dbConnection.query('SELECT client_data FROM client_list WHERE (clientid LIKE ' + clientid + ')', async (error, results, fields) => {
       if (error) {
         console.error(error);
         res.status(500);
@@ -167,7 +167,7 @@ exports.createSession = async (req, res) => {
       }
 
       pw = sha256(pw);
-      db_conn.query('SELECT nickname, pid FROM userdata WHERE (id LIKE ' + id + ') AND (pw LIKE \'' + pw + '\')', async (error, results, fields) => {
+      dbConnection.query('SELECT nickname, pid FROM userdata WHERE (id LIKE ' + id + ') AND (pw LIKE \'' + pw + '\')', async (error, results, fields) => {
         if (error) {
           console.error(error);
           res.status(500);
@@ -210,11 +210,11 @@ exports.createSession = async (req, res) => {
         expireData = expireData.toISOString().slice(0, 19).replace('T', ' ');
         const sessid = sidUniversal.randomString(64);
 
-        db_conn.query('INSERT INTO session_list (sessid, pid, clientid, expire) VALUES (\'' + sessid + '\', \'' + results[0].pid + '\', ' + clientid + ', \'' + expireData + '\')', (error, results, fields) => {
+        dbConnection.query('INSERT INTO session_list (sessid, pid, clientid, expire) VALUES (\'' + sessid + '\', \'' + results[0].pid + '\', ' + clientid + ', \'' + expireData + '\')', (error, results, fields) => {
           if (error) console.error(error);
         });
 
-        db_conn.query('UPDATE client_list SET recent_login=now(), recent_id=' + id + ' WHERE clientid=' + clientid, (error, results, fields) => {
+        dbConnection.query('UPDATE client_list SET recent_login=now(), recent_id=' + id + ' WHERE clientid=' + clientid, (error, results, fields) => {
           if (error) console.error(error);
         });
 
@@ -256,15 +256,15 @@ exports.createUser = async (req, res) => {
     return;
   }
 
-  const id = db_conn.escape(req.body.userid); // receive POST json ID
+  const id = dbConnection.escape(req.body.userid); // receive POST json ID
   let pw = req.body.password; // receive POST json PW
-  const clientid = db_conn.escape(req.body.clientid); // receive POST json CID
-  let nickname = db_conn.escape(req.body.nickname); // receive POST json CID
+  const clientid = dbConnection.escape(req.body.clientid); // receive POST json CID
+  let nickname = dbConnection.escape(req.body.nickname); // receive POST json CID
   if (nickname === '') {
     nickname = id;
   }
 
-  await db_conn.query('SELECT client_data FROM client_list WHERE (clientid LIKE ' + clientid + ')', async (error, results, fields) => {
+  await dbConnection.query('SELECT client_data FROM client_list WHERE (clientid LIKE ' + clientid + ')', async (error, results, fields) => {
     if (error) {
       console.error(error);
       res.status(500);
@@ -291,7 +291,7 @@ exports.createUser = async (req, res) => {
     }
     const pid = md5(id + pw + id);
     pw = sha256(pw);
-    db_conn.query('INSERT INTO userdata (id,pw,nickname,register_date,pid) VALUES(' + id + ', \'' + pw + '\', ' + nickname + ', now(), \'' + pid + '\')', async (error, results, fields) => {
+    dbConnection.query('INSERT INTO userdata (id,pw,nickname,register_date,pid) VALUES(' + id + ', \'' + pw + '\', ' + nickname + ', now(), \'' + pid + '\')', async (error, results, fields) => {
       if (error) {
         console.error(error);
         res.status(500);
@@ -334,9 +334,9 @@ exports.deleteSession = (req, res) => {
     return;
   }
 
-  const sessid = db_conn.escape(req.body.sessid);
-  const clientid = db_conn.escape(req.body.clientid);
-  db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
+  const sessid = dbConnection.escape(req.body.sessid);
+  const clientid = dbConnection.escape(req.body.clientid);
+  dbConnection.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
     if (error) {
       console.error(error);
       res.status(500);
@@ -361,7 +361,7 @@ exports.deleteSession = (req, res) => {
       });
       return;
     }
-    db_conn.query('DELETE FROM session_list WHERE sessid=' + sessid, (error, results, fields) => {
+    dbConnection.query('DELETE FROM session_list WHERE sessid=' + sessid, (error, results, fields) => {
       if (error) {
         console.error(error);
         res.status(500);
@@ -388,9 +388,9 @@ exports.deleteSession = (req, res) => {
 };
 
 exports.getUserInfo = (req, res) => {
-  const sessid = db_conn.escape(req.params.sessid);
-  const clientid = db_conn.escape(req.params.clientid);
-  db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
+  const sessid = dbConnection.escape(req.params.sessid);
+  const clientid = dbConnection.escape(req.params.clientid);
+  dbConnection.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
     if (error) {
       res.status(500);
       // 정상 작동 여부 전송
@@ -416,7 +416,7 @@ exports.getUserInfo = (req, res) => {
     }
     switch (req.params.data) {
       case 'usname':
-        db_conn.query('SELECT id FROM userdata WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
+        dbConnection.query('SELECT id FROM userdata WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
           if (error) {
             console.error(error);
             res.status(500);
@@ -442,7 +442,7 @@ exports.getUserInfo = (req, res) => {
         });
         break;
       case 'pfimg':
-        db_conn.query('SELECT profile_img FROM userdata WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
+        dbConnection.query('SELECT profile_img FROM userdata WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
           if (error) {
             console.error(error);
             res.status(500);
@@ -508,9 +508,9 @@ exports.createUserInfo = (req, res) => {
         });
         return;
       }
-      const devicedata = db_conn.escape(req.body.devicedata);
+      const devicedata = dbConnection.escape(req.body.devicedata);
       const clientid = sidUniversal.randomString(64);
-      db_conn.query('INSERT INTO client_list (clientid, client_data) VALUES(\'' + clientid + '\', ' + devicedata + ')', async (error, results, fields) => {
+      dbConnection.query('INSERT INTO client_list (clientid, client_data) VALUES(\'' + clientid + '\', ' + devicedata + ')', async (error, results, fields) => {
         if (error) {
           console.error(error);
           res.status(500);
@@ -566,9 +566,9 @@ exports.verifyUserInfo = (req, res) => {
     return;
   }
 
-  const sessid = db_conn.escape(req.body.sessid);
-  const clientid = db_conn.escape(req.body.clientid);
-  db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
+  const sessid = dbConnection.escape(req.body.sessid);
+  const clientid = dbConnection.escape(req.body.clientid);
+  dbConnection.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
     if (error) {
       console.error(error);
       res.status(500);
@@ -626,7 +626,7 @@ exports.verifyUserInfo = (req, res) => {
           });
           return;
         }
-        db_conn.query('SELECT pw FROM userdata WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
+        dbConnection.query('SELECT pw FROM userdata WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
           if (error) {
             console.error(error);
             res.status(500);
@@ -677,7 +677,7 @@ exports.verifyUserInfo = (req, res) => {
 exports.checkExistData = async (req, res) => {
   switch (req.params.type) {
     case 'id':
-      sidUniversal.checkExist(db_conn, 'userdata', req.params.type, req.params.data, (isExist) => {
+      sidUniversal.checkExist(dbConnection, 'userdata', req.params.type, req.params.data, (isExist) => {
         res.send({
           type: 'response',
 
@@ -701,9 +701,9 @@ exports.modifyUserData = (req, res) => {
     return;
   }
 
-  const sessid = db_conn.escape(req.body.sessid);
-  const clientid = db_conn.escape(req.body.clientid);
-  db_conn.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
+  const sessid = dbConnection.escape(req.body.sessid);
+  const clientid = dbConnection.escape(req.body.clientid);
+  dbConnection.query('SELECT pid FROM session_list WHERE (sessid LIKE ' + sessid + ') AND (clientid LIKE ' + clientid + ')', (error, results, fields) => {
     if (error) {
       console.error(error);
       res.status(500);
@@ -733,7 +733,7 @@ exports.modifyUserData = (req, res) => {
     switch (req.body.data) {
       case 'id':
         value = sha256(req.body.value);
-        db_conn.query('UPDATE userdata SET id=\'' + value + '\' WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
+        dbConnection.query('UPDATE userdata SET id=\'' + value + '\' WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
           if (error) {
             console.error(error);
             res.status(500);
@@ -759,7 +759,7 @@ exports.modifyUserData = (req, res) => {
         break;
       case 'password':
         value = sha256(req.body.value);
-        db_conn.query('UPDATE userdata SET pw=\'' + value + '\' WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
+        dbConnection.query('UPDATE userdata SET pw=\'' + value + '\' WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
           if (error) {
             console.error(error);
             res.status(500);
@@ -784,7 +784,7 @@ exports.modifyUserData = (req, res) => {
         });
         break;
       case 'nickname':
-        db_conn.query('UPDATE userdata SET nickname=\'' + value + '\' WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
+        dbConnection.query('UPDATE userdata SET nickname=\'' + value + '\' WHERE pid=\'' + results[0].pid + '\'', (error, results, fields) => {
           if (error) {
             console.error(error);
             res.status(500);
