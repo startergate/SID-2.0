@@ -1,6 +1,6 @@
 {
-  "name": "SID-2.0",
-  "version": "0.0.0",
+  "name": "SID",
+  "version": "2.3.3",
   "private": true,
   "scripts": {
     "start": "cross-env NODE_PATH=./ pm2 start ./bin/www",
