@@ -823,7 +823,7 @@ exports.modifyUserData = (req, res) => {
 };
 
 exports.convertIdToPid = (req, res) => {
-  dbConnection.query(`SELECT pid FROM userdata WHERE id = '${req.params.id}'`, (error, result) => {
+  dbConnection.query(`SELECT pid FROM userdata WHERE id = '${req.params.id}' OR pid = '${req.params.id}'`, (error, result) => {
     if (error) {
       console.error(error);
       res.status(500);
