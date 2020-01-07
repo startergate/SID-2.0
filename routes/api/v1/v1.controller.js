@@ -821,3 +821,40 @@ exports.modifyUserData = (req, res) => {
     }
   });
 };
+
+exports.convertIdToPid = (req, res) => {
+  dbConnection.query(`SELECT pid FROM userdata WHERE id = '${req.params.id}'`, (error, result) => {
+    if (error) {
+      console.error(error);
+      res.status(500);
+      // 정상 작동 여부 전송
+      res.send({
+        type: 'response',
+
+        is_valid: true,
+        is_succeed: false
+      });
+      return;
+    }
+
+    if (result.length < 1) {
+      res.status(400);
+      res.send({
+        type: 'error',
+
+        is_valid: false,
+        is_succeed: false,
+        error: 'ID Not Exist'
+      });
+      return;
+    }
+    res.status(200);
+    res.send({
+      type: 'response',
+
+      is_valid: true,
+      is_succeed: true,
+      response_data: result[0].pid
+    });
+  })
+};

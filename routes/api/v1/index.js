@@ -13,6 +13,8 @@ router.post('/user', controller.createUser);
 
 router.delete('/session', controller.deleteSession);
 
+router.get('/convert/id/:id', controller.convertIdToPid);
+
 /* info modifier. */
 router.get('/:clientid/:sessid/:data', controller.getUserInfo);
 
