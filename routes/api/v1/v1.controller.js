@@ -56,7 +56,7 @@ exports.createSession = async (req, res) => {
         return;
       }
       if (results.length < 1) {
-        if (res.body.isClient) {
+        if (req.body.isClient) {
           res.status(200);
         } else {
           res.status(400);
