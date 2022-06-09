@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@startergate/sidjs": "0.0.7",
-    "async": "^3.2.3",
+    "async": "^3.2.4",
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.6",
     "cross-env": "^7.0.3",
